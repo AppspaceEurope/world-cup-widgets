@@ -5,3 +5,6 @@ working/
 Thumbs.db
 .vscode/
 .idea/
+
+# Local-only agent context (points to internal vault paths — keep private)
+CLAUDE.md
