@@ -19,6 +19,8 @@
     var c = current;
     current = null;
     if (c.backdrop && c.backdrop.parentNode) c.backdrop.parentNode.removeChild(c.backdrop);
+    // Restore the widget's normal content (hidden while the modal was open).
+    if (c.root) c.root.style.display = c.rootDisplay;
     if (c.usedHostModal && c.widgetApi && typeof c.widgetApi.setViewMode === 'function') {
       c.widgetApi.setViewMode('default').catch(function () {});
     }
@@ -38,17 +40,26 @@
     document.body.appendChild(backdrop);
     document.addEventListener('keydown', onKey);
 
+    // The host modal (setViewMode) expands the whole iframe, so the widget's
+    // own content would otherwise show above/around the modal panel. Hide it
+    // for the host-modal path only (the inline fallback already dims it with a
+    // fixed overlay, and hiding it there could collapse the iframe height).
+    var root = document.getElementById('widget-container');
+    var rootDisplay = root ? root.style.display : '';
+
     var usedHostModal = false;
     if (widgetApi && typeof widgetApi.setViewMode === 'function') {
       usedHostModal = true;
       backdrop.classList.add('is-host-modal'); // host draws the dim; we go full-bleed
+      if (root) root.style.display = 'none';
       widgetApi.setViewMode('modalLarge').catch(function () {
         backdrop.classList.remove('is-host-modal');
+        if (root) root.style.display = rootDisplay; // host rejected — fall back to inline
         if (current) current.usedHostModal = false;
       });
     }
 
-    current = { backdrop: backdrop, widgetApi: widgetApi, usedHostModal: usedHostModal };
+    current = { backdrop: backdrop, widgetApi: widgetApi, usedHostModal: usedHostModal, root: root, rootDisplay: rootDisplay };
 
     var first = panel.querySelector('.wc-modal-close');
     if (first) first.focus();
