@@ -1,0 +1,104 @@
+/* World Cup widgets — base styles shared by Games + Tables.
+ * Transparent background, zero border on the outer container (brand requirement). */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* Invisible scrollbars — content still scrolls. The widget is its own iframe,
+ * so applying this globally is safe and won't affect the host console. */
+* { scrollbar-width: none; -ms-overflow-style: none; }
+*::-webkit-scrollbar { width: 0; height: 0; display: none; }
+
+html, body {
+  margin: 0;
+  background: transparent;
+  font-family: var(--wc-font-body);
+  color: var(--wc-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.4;
+}
+
+#widget-container {
+  width: 100%;
+  background: transparent;
+  border: 0;
+}
+
+/* Header (title + status) */
+.wc-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--wc-gap);
+  margin-bottom: 12px;
+}
+.wc-title {
+  font-family: var(--wc-font-head);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--wc-text);
+}
+.wc-status {
+  font-size: 0.72rem;
+  color: var(--wc-text-faint);
+  white-space: nowrap;
+}
+.wc-status.is-stale { color: var(--wc-live); }
+
+/* Loading skeleton */
+.wc-skeleton { display: flex; flex-direction: column; gap: 10px; padding: 4px 0; }
+.wc-skel-row {
+  height: 56px;
+  border-radius: var(--wc-radius);
+  background: linear-gradient(90deg, var(--wc-surface-2) 25%, var(--wc-border) 37%, var(--wc-surface-2) 63%);
+  background-size: 400% 100%;
+  animation: wc-shimmer 1.4s ease infinite;
+}
+@keyframes wc-shimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+
+/* Empty + error states */
+.wc-empty, .wc-error {
+  padding: 28px 16px;
+  text-align: center;
+  color: var(--wc-text-muted);
+  font-size: 0.9rem;
+}
+.wc-error { color: var(--wc-live); }
+.wc-retry {
+  margin-top: 10px;
+  font: inherit;
+  font-size: 0.82rem;
+  color: var(--wc-on-accent);
+  background: var(--wc-accent);
+  border: 0;
+  border-radius: var(--wc-radius-sm);
+  padding: 6px 14px;
+  cursor: pointer;
+}
+.wc-retry:hover { background: var(--wc-accent-dark); }
+
+/* Team badge (logo / initials / TBD placeholder) */
+.wc-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border-radius: var(--wc-radius-pill);
+  overflow: hidden;
+  background: var(--wc-surface-2);
+  font-family: var(--wc-font-head);
+  font-weight: 700;
+  color: var(--wc-text-muted);
+  font-size: 0.62rem;
+  line-height: 1;
+}
+.wc-badge img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.wc-badge.is-tbd {
+  background: transparent;
+  border: 1.5px dashed var(--wc-border-strong);
+  color: var(--wc-text-faint);
+}
+
+/* Focus ring for keyboard users */
+.wc-clickable { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--wc-accent); outline-offset: 2px; border-radius: var(--wc-radius-sm); }

@@ -1,0 +1,82 @@
+{
+  "templateKey": "world-cup-tables",
+  "name": "World Cup Tables",
+  "version": "1.0.1",
+  "description": "FIFA World Cup group standings for all 12 groups or a chosen subset, with live points, goal difference and qualification positions.",
+  "icon": "images/icon.svg",
+  "author": {
+    "name": "Mike Gibbs",
+    "company": "Appspace",
+    "email": "mike.gibbs@appspace.com"
+  },
+  "widgetType": "custom",
+  "allowMultiple": true,
+  "supportedSpaceTypes": ["homepage", "community", "topic", "channel"],
+  "ui": {
+    "defaultHeight": 600,
+    "skeletonType": "custom"
+  },
+  "configuration": {
+    "fields": [
+      {
+        "name": "title",
+        "type": "text",
+        "label": "Widget title",
+        "description": "Shown above the tables. Leave empty to hide.",
+        "groupName": "Content",
+        "groupKey": "content",
+        "default": "Group Tables",
+        "validation": { "required": false, "maxLength": 60 }
+      },
+      {
+        "name": "groups",
+        "type": "multiselect",
+        "label": "Groups to show",
+        "description": "Leave empty to show all 12 groups.",
+        "groupName": "Content",
+        "groupKey": "content",
+        "options": [
+          { "value": "A", "label": "Group A" },
+          { "value": "B", "label": "Group B" },
+          { "value": "C", "label": "Group C" },
+          { "value": "D", "label": "Group D" },
+          { "value": "E", "label": "Group E" },
+          { "value": "F", "label": "Group F" },
+          { "value": "G", "label": "Group G" },
+          { "value": "H", "label": "Group H" },
+          { "value": "I", "label": "Group I" },
+          { "value": "J", "label": "Group J" },
+          { "value": "K", "label": "Group K" },
+          { "value": "L", "label": "Group L" }
+        ],
+        "default": [],
+        "validation": { "required": false }
+      },
+      {
+        "name": "accentColor",
+        "type": "colorPicker",
+        "label": "Accent colour override",
+        "description": "Leave empty to use your Appspace brand colour.",
+        "groupName": "Display",
+        "groupKey": "display",
+        "default": ""
+      },
+      {
+        "name": "refreshMinutes",
+        "type": "number",
+        "label": "Refresh interval (minutes)",
+        "description": "How often standings refresh.",
+        "groupName": "Data & Refresh",
+        "groupKey": "data",
+        "default": 15,
+        "validation": { "required": true, "min": 5, "max": 240 }
+      }
+    ]
+  },
+  "analyticsEvents": [
+    { "name": "refreshFailed", "metadataKeys": ["reason", "endpoint"] }
+  ],
+  "appspaceApis": [
+    { "label": "Get Brand Profiles", "name": "getBrandProfiles", "path": "theme/brandprofiles", "method": "GET" }
+  ]
+}

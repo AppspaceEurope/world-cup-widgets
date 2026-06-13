@@ -1,0 +1,62 @@
+/* tables-widget — Tables-specific styles. Base + tokens come from shared/css. */
+
+#widget-container { padding: 4px; }
+
+/* Responsive grid: 1 col narrow → 2 → 3 wide. minmax keeps each table readable. */
+.wc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.wc-group-card {
+  background: var(--wc-surface);
+  border: 1px solid var(--wc-border);
+  border-radius: var(--wc-radius);
+  padding: 10px 12px;
+}
+.wc-group-title {
+  font-family: var(--wc-font-head);
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--wc-text);
+  margin-bottom: 8px;
+  letter-spacing: 0.01em;
+}
+
+.wc-std { display: flex; flex-direction: column; }
+.wc-std-row {
+  display: grid;
+  grid-template-columns: 18px 1fr repeat(8, 22px);
+  align-items: center;
+  gap: 2px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--wc-border);
+  font-size: 0.78rem;
+}
+.wc-std-row:last-child { border-bottom: 0; }
+.wc-std-head {
+  font-size: 0.64rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--wc-text-faint);
+  letter-spacing: 0.02em;
+}
+.wc-std-row.is-q { background: var(--wc-accent-pale); border-radius: var(--wc-radius-sm); }
+.wc-std-row.is-q .wc-std-rank { color: var(--wc-accent); font-weight: 700; }
+
+.wc-std-rank { text-align: center; color: var(--wc-text-muted); font-weight: 600; }
+.wc-std-team { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.wc-std-team-h { padding-left: 4px; }
+.wc-std-name {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-weight: 500; color: var(--wc-text);
+}
+.wc-std-stat { text-align: center; color: var(--wc-text-muted); font-variant-numeric: tabular-nums; }
+.wc-std-stat.is-pts { font-weight: 700; color: var(--wc-text); }
+
+/* Narrow (sidebar): drop W/D/L/GF/GA to keep P / GD / Pts legible. */
+@media (max-width: 360px) {
+  .wc-std-row { grid-template-columns: 16px 1fr 22px 26px 26px; }
+  .col-w, .col-d, .col-l, .col-gf, .col-ga { display: none; }
+}

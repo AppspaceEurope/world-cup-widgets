@@ -1,0 +1,17 @@
+{
+  "name": "world-cup-widgets",
+  "version": "1.0.0",
+  "description": "Appspace custom widgets for the FIFA World Cup 2026: Games (live scores/fixtures) and Tables (group standings)",
+  "private": true,
+  "scripts": {
+    "dev:games": "node scripts/dev-server.js games-widget 5173",
+    "dev:tables": "node scripts/dev-server.js tables-widget 5174",
+    "package:games": "node scripts/package.js games-widget",
+    "package:tables": "node scripts/package.js tables-widget",
+    "package": "node scripts/package.js games-widget && node scripts/package.js tables-widget",
+    "snapshots": "node scripts/capture-snapshots.js"
+  },
+  "devDependencies": {
+    "archiver": "^6.0.1"
+  }
+}

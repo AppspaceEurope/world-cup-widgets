@@ -1,0 +1,50 @@
+/* World Cup widgets — design tokens.
+ *
+ * Neutral defaults below are overridden at runtime by wc-brand.js, which maps
+ * the Appspace Brand API colour palette onto --wc-accent*. Fonts mirror the
+ * Employee App (Poppins headers / Inter body) with system fallbacks. */
+
+:root {
+  /* Accent — replaced by Brand API or the accentColor config override */
+  --wc-accent: #1f6feb;
+  --wc-accent-dark: #14315c;
+  --wc-accent-pale: #eef4ff;
+  --wc-accent-2: #5b9bff;
+  --wc-on-accent: #ffffff;
+
+  /* Neutrals — aligned to Employee App --nc-colors__neutral* scale */
+  --wc-text: #1e293b;
+  --wc-text-muted: #64748b;
+  --wc-text-faint: #94a3b8;
+  --wc-surface: #ffffff;
+  --wc-surface-2: #f8fafc;
+  --wc-border: #e2e8f0;
+  --wc-border-strong: #cbd5e1;
+
+  /* Status */
+  --wc-live: #e11d48;
+  --wc-positive: #16a34a;
+
+  /* Shape & type */
+  --wc-radius: 0.5rem;
+  --wc-radius-sm: 0.375rem;
+  --wc-radius-pill: 999px;
+  --wc-font-head: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --wc-font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Spacing */
+  --wc-gap: 8px;
+  --wc-pad: 16px;
+}
+
+/* Dark backgrounds: the widget is transparent, so if the host page is dark the
+ * host should drive this. We expose a manual class for the tester. */
+.wc-theme-dark {
+  --wc-text: #e2e8f0;
+  --wc-text-muted: #94a3b8;
+  --wc-text-faint: #64748b;
+  --wc-surface: rgba(255, 255, 255, 0.06);
+  --wc-surface-2: rgba(255, 255, 255, 0.03);
+  --wc-border: rgba(255, 255, 255, 0.12);
+  --wc-border-strong: rgba(255, 255, 255, 0.2);
+}

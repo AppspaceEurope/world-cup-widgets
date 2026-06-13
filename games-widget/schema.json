@@ -1,0 +1,98 @@
+{
+  "templateKey": "world-cup-games",
+  "name": "World Cup Games",
+  "version": "1.0.1",
+  "description": "Live scores, fixtures and results for the FIFA World Cup. Browse today's matches and upcoming days, with goal scorers and a match-detail view.",
+  "icon": "images/icon.svg",
+  "author": {
+    "name": "Mike Gibbs",
+    "company": "Appspace",
+    "email": "mike.gibbs@appspace.com"
+  },
+  "widgetType": "custom",
+  "allowMultiple": true,
+  "supportedSpaceTypes": ["homepage", "community", "topic", "channel"],
+  "ui": {
+    "defaultHeight": 420,
+    "skeletonType": "custom"
+  },
+  "configuration": {
+    "fields": [
+      {
+        "name": "title",
+        "type": "text",
+        "label": "Widget title",
+        "description": "Shown above the match list. Leave empty to hide.",
+        "groupName": "Content",
+        "groupKey": "content",
+        "default": "World Cup",
+        "validation": { "required": false, "maxLength": 60 }
+      },
+      {
+        "name": "daysAhead",
+        "type": "number",
+        "label": "Days ahead to browse",
+        "description": "How many future days the day pager can reach (0 = today only).",
+        "groupName": "Content",
+        "groupKey": "content",
+        "default": 7,
+        "validation": { "required": true, "min": 0, "max": 30 }
+      },
+      {
+        "name": "maxScorersShown",
+        "type": "number",
+        "label": "Scorers shown per match",
+        "description": "Goal scorers listed under each match before the \"+n more\" link (0 = hide scorers).",
+        "groupName": "Display",
+        "groupKey": "display",
+        "default": 3,
+        "validation": { "required": true, "min": 0, "max": 10 }
+      },
+      {
+        "name": "showVenue",
+        "type": "boolean",
+        "label": "Show venue in match detail",
+        "groupName": "Display",
+        "groupKey": "display",
+        "default": true
+      },
+      {
+        "name": "accentColor",
+        "type": "colorPicker",
+        "label": "Accent colour override",
+        "description": "Leave empty to use your Appspace brand colour.",
+        "groupName": "Display",
+        "groupKey": "display",
+        "default": ""
+      },
+      {
+        "name": "livePollSeconds",
+        "type": "number",
+        "label": "Live refresh interval (seconds)",
+        "description": "How often scores refresh while a match is in play.",
+        "groupName": "Data & Refresh",
+        "groupKey": "data",
+        "default": 60,
+        "validation": { "required": true, "min": 30, "max": 600 }
+      },
+      {
+        "name": "idlePollMinutes",
+        "type": "number",
+        "label": "Idle refresh interval (minutes)",
+        "description": "How often fixtures refresh when nothing is live.",
+        "groupName": "Data & Refresh",
+        "groupKey": "data",
+        "default": 10,
+        "validation": { "required": true, "min": 5, "max": 120 }
+      }
+    ]
+  },
+  "analyticsEvents": [
+    { "name": "matchDetailOpened", "metadataKeys": ["matchId", "home", "away", "status"] },
+    { "name": "dayChanged", "metadataKeys": ["offset", "date"] },
+    { "name": "refreshFailed", "metadataKeys": ["reason", "endpoint"] }
+  ],
+  "appspaceApis": [
+    { "label": "Get Brand Profiles", "name": "getBrandProfiles", "path": "theme/brandprofiles", "method": "GET" }
+  ]
+}

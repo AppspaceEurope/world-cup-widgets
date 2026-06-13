@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Cup Games</title>
+  <script>
+    (function () {
+      var appspace = window.appspace = window.appspace || {};
+
+      // Promise-based helper — available before widget-api.min.js loads.
+      appspace.waitForWidgetApi = function (timeout) {
+        if (appspace.widgetApi) return Promise.resolve(appspace.widgetApi);
+        return new Promise(function (resolve, reject) {
+          var timer = setTimeout(function () {
+            reject(new Error('Widget API did not load within ' + (timeout || 10000) + 'ms'));
+          }, timeout || 10000);
+          window.addEventListener('appspace:widgetapi:ready', function () {
+            clearTimeout(timer);
+            resolve(appspace.widgetApi);
+          }, { once: true });
+        });
+      };
+
+      var params = new URLSearchParams(window.location.search);
+      var consoleUrl = params.get('consoleUrl');
+      if (consoleUrl) {
+        var v = params.get('v');
+        var script = document.createElement('script');
+        script.src = consoleUrl + '/libs/widget-api.min.js' + (v ? '?v=' + v : '');
+        script.async = false;
+        document.currentScript.parentNode.insertBefore(script, document.currentScript.nextSibling);
+      }
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap">
+  <link rel="stylesheet" href="shared/css/tokens.css">
+  <link rel="stylesheet" href="shared/css/base.css">
+  <link rel="stylesheet" href="widget.css">
+</head>
+<body>
+  <div id="widget-container" class="loading">
+    <div class="wc-skeleton">
+      <div class="wc-skel-row"></div>
+      <div class="wc-skel-row"></div>
+      <div class="wc-skel-row"></div>
+    </div>
+  </div>
+
+  <!-- Shared modules (dependency order) -->
+  <script src="shared/js/wc-dom.js"></script>
+  <script src="shared/js/wc-cache.js"></script>
+  <script src="shared/js/espn-adapter.js"></script>
+  <script src="shared/js/wc-poller.js"></script>
+  <script src="shared/js/wc-brand.js"></script>
+  <script src="shared/js/wc-height.js"></script>
+  <script src="shared/js/wc-teams.js"></script>
+
+  <!-- Games widget -->
+  <script src="js/games-config.js"></script>
+  <script src="js/games-render.js"></script>
+  <script src="js/games-modal.js"></script>
+  <script src="js/games-main.js"></script>
+</body>
+</html>
