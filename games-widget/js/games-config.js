@@ -26,6 +26,7 @@
     return {
       title: str(c, 'title', ''),
       daysAhead: num(c, 'daysAhead', 7, 0, 30),
+      daysBehind: num(c, 'daysBehind', 3, 0, 14),
       maxScorersShown: num(c, 'maxScorersShown', 3, 0, 10),
       showVenue: bool(c, 'showVenue', true),
       accentColor: str(c, 'accentColor', ''),

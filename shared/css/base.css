@@ -45,6 +45,16 @@ html, body {
 }
 .wc-status.is-stale { color: var(--wc-live); }
 
+/* Footer status bar — "Updated …" / offline note, sits at the bottom */
+.wc-statusbar {
+  font-size: 0.72rem;
+  color: var(--wc-text-faint);
+  text-align: right;
+  padding-top: 8px;
+  margin-top: 4px;
+}
+.wc-statusbar.is-stale { color: var(--wc-live); }
+
 /* Loading skeleton */
 .wc-skeleton { display: flex; flex-direction: column; gap: 10px; padding: 4px 0; }
 .wc-skel-row {

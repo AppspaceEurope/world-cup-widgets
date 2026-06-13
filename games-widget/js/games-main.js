@@ -26,9 +26,11 @@
     slots.header = el('div', 'wc-slot-header');
     slots.pager = el('div', 'wc-slot-pager');
     slots.content = el('div', 'wc-slot-content');
+    slots.footer = el('div', 'wc-slot-footer');
     container.appendChild(slots.header);
     container.appendChild(slots.pager);
     container.appendChild(slots.content);
+    container.appendChild(slots.footer);
   }
 
   function cacheKey(offset) {
@@ -37,16 +39,27 @@
 
   function renderHeader() {
     WC.dom.clear(slots.header);
-    slots.header.appendChild(WC.gamesRender.header(state.cfg, { savedAt: state.savedAt, stale: state.stale }));
+    slots.header.appendChild(WC.gamesRender.header(state.cfg));
+  }
+
+  function renderFooter() {
+    WC.dom.clear(slots.footer);
+    var bar = WC.gamesRender.statusBar({ savedAt: state.savedAt, stale: state.stale });
+    if (bar) slots.footer.appendChild(bar);
   }
 
   function renderPager() {
     WC.dom.clear(slots.pager);
-    if (state.cfg.daysAhead <= 0) return; // single-day mode: no pager
+    if (state.cfg.daysAhead <= 0 && state.cfg.daysBehind <= 0) return; // single-day mode: no pager
     slots.pager.appendChild(WC.gamesRender.pager(
-      { offset: state.offset, daysAhead: state.cfg.daysAhead },
+      { offset: state.offset, daysAhead: state.cfg.daysAhead, daysBehind: state.cfg.daysBehind },
       selectDay
     ));
+    // Past chips sit left of Today — bring the active day into view.
+    var active = slots.pager.querySelector('[data-active]');
+    if (active) setTimeout(function () {
+      try { active.scrollIntoView({ inline: 'center', block: 'nearest' }); } catch (e) {}
+    }, 0);
   }
 
   function onOpenDetail(match) {
@@ -113,8 +126,8 @@
         state.stale = false;
         var entry = WC.cache.set(cacheKey(offset), result);
         state.savedAt = entry.savedAt;
-        renderHeader();
         renderContent(toDayData(offset, result));
+        renderFooter();
       },
       onError: function (err) {
         if (offset !== state.offset) return;
@@ -123,10 +136,11 @@
         if (cached && cached.data) {
           state.stale = true;
           state.savedAt = cached.savedAt;
-          renderHeader();
           renderContent(toDayData(offset, cached.data));
+          renderFooter();
         } else {
           renderError();
+          renderFooter();
         }
       }
     });
@@ -143,13 +157,12 @@
     var cached = WC.cache.get(cacheKey(offset));
     if (cached && cached.data) {
       state.savedAt = cached.savedAt;
-      renderHeader();
       renderContent(toDayData(offset, cached.data));
     } else {
       state.savedAt = null;
-      renderHeader();
       renderSkeleton();
     }
+    renderFooter();
     startPollerForDay();
   }
 
@@ -161,9 +174,9 @@
       state.cfg = WC.gamesConfig.parse(widgetConfig);
 
       buildLayout();
+      renderHeader();
       WC.height.observe(container, state.widgetApi);
-      // Brand is non-blocking; re-render header once it resolves (in case title colours change).
-      WC.brand.apply(state.widgetApi, state.cfg.accentColor);
+      WC.brand.apply(state.widgetApi, state.cfg.accentColor); // non-blocking
 
       selectDay(0);
 

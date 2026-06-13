@@ -12,27 +12,29 @@
     return wrap;
   }
 
-  // --- Header: title + last-updated / stale badge ---
-  function header(cfg, statusInfo) {
+  // --- Header: title only (the status moved to the footer status bar) ---
+  function header(cfg) {
     var h = el('div', 'wc-header');
     h.appendChild(el('div', { class: 'wc-title', text: cfg.title || '' }));
-    var s = el('div', { class: 'wc-status' + (statusInfo && statusInfo.stale ? ' is-stale' : '') });
-    if (statusInfo && statusInfo.stale) {
-      s.textContent = 'Offline. Showing cached scores';
-    } else if (statusInfo && statusInfo.savedAt) {
-      s.textContent = WC.dom.relTime(statusInfo.savedAt);
-    }
-    h.appendChild(s);
-    if (!cfg.title && (!statusInfo || (!statusInfo.savedAt && !statusInfo.stale))) {
-      h.style.display = 'none';
-    }
+    if (!cfg.title) h.style.display = 'none';
     return h;
   }
 
-  // --- Day pager: horizontally scrollable chips Today → +daysAhead ---
+  // --- Footer status bar: last-updated / stale. Returns null if nothing to show. ---
+  function statusBar(statusInfo) {
+    if (!statusInfo || (!statusInfo.savedAt && !statusInfo.stale)) return null;
+    var s = el('div', { class: 'wc-statusbar' + (statusInfo.stale ? ' is-stale' : '') });
+    s.textContent = statusInfo.stale
+      ? 'Offline. Showing cached scores'
+      : WC.dom.relTime(statusInfo.savedAt);
+    return s;
+  }
+
+  // --- Day pager: horizontally scrollable chips, -daysBehind → +daysAhead ---
   function pager(state, onSelect) {
     var wrap = el('div', { class: 'wc-pager', role: 'tablist', aria: { label: 'Match days' } });
-    for (var off = 0; off <= state.daysAhead; off++) {
+    var back = state.daysBehind || 0;
+    for (var off = -back; off <= state.daysAhead; off++) {
       (function (offset) {
         var d = new Date();
         d.setDate(d.getDate() + offset);
@@ -43,6 +45,7 @@
           aria: { selected: offset === state.offset ? 'true' : 'false' },
           on: { click: function () { onSelect(offset); } }
         });
+        if (offset === state.offset) chip.setAttribute('data-active', '1');
         wrap.appendChild(chip);
       })(off);
     }
@@ -162,6 +165,7 @@
   WC.gamesRender = {
     skeleton: skeleton,
     header: header,
+    statusBar: statusBar,
     pager: pager,
     day: day,
     matchCard: matchCard,

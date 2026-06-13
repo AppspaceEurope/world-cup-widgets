@@ -11,15 +11,21 @@
     return wrap;
   }
 
-  function header(cfg, statusInfo) {
+  function header(cfg) {
     var h = el('div', 'wc-header');
     h.appendChild(el('div', { class: 'wc-title', text: cfg.title || '' }));
-    var s = el('div', { class: 'wc-status' + (statusInfo && statusInfo.stale ? ' is-stale' : '') });
-    if (statusInfo && statusInfo.stale) s.textContent = 'Offline. Showing cached tables';
-    else if (statusInfo && statusInfo.savedAt) s.textContent = WC.dom.relTime(statusInfo.savedAt);
-    h.appendChild(s);
-    if (!cfg.title && (!statusInfo || (!statusInfo.savedAt && !statusInfo.stale))) h.style.display = 'none';
+    if (!cfg.title) h.style.display = 'none';
     return h;
+  }
+
+  // Footer status bar: last-updated / stale. Returns null if nothing to show.
+  function statusBar(statusInfo) {
+    if (!statusInfo || (!statusInfo.savedAt && !statusInfo.stale)) return null;
+    var s = el('div', { class: 'wc-statusbar' + (statusInfo.stale ? ' is-stale' : '') });
+    s.textContent = statusInfo.stale
+      ? 'Offline. Showing cached tables'
+      : WC.dom.relTime(statusInfo.savedAt);
+    return s;
   }
 
   function teamCell(team) {
@@ -88,6 +94,7 @@
   WC.tablesRender = {
     skeleton: skeleton,
     header: header,
+    statusBar: statusBar,
     grid: grid,
     errorState: errorState
   };

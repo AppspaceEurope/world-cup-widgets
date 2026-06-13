@@ -17,13 +17,21 @@
     container.classList.remove('loading');
     slots.header = el('div', 'wc-slot-header');
     slots.content = el('div', 'wc-slot-content');
+    slots.footer = el('div', 'wc-slot-footer');
     container.appendChild(slots.header);
     container.appendChild(slots.content);
+    container.appendChild(slots.footer);
   }
 
   function renderHeader() {
     WC.dom.clear(slots.header);
-    slots.header.appendChild(WC.tablesRender.header(state.cfg, { savedAt: state.savedAt, stale: state.stale }));
+    slots.header.appendChild(WC.tablesRender.header(state.cfg));
+  }
+
+  function renderFooter() {
+    WC.dom.clear(slots.footer);
+    var bar = WC.tablesRender.statusBar({ savedAt: state.savedAt, stale: state.stale });
+    if (bar) slots.footer.appendChild(bar);
   }
 
   function renderGrid(data) {
@@ -59,8 +67,8 @@
         state.stale = false;
         var entry = WC.cache.set(CACHE_KEY, data);
         state.savedAt = entry.savedAt;
-        renderHeader();
         renderGrid(data);
+        renderFooter();
       },
       onError: function (err) {
         fireAnalytics('refreshFailed', { reason: (err && err.message) || 'error', endpoint: 'standings' });
@@ -68,10 +76,11 @@
         if (cached && cached.data) {
           state.stale = true;
           state.savedAt = cached.savedAt;
-          renderHeader();
           renderGrid(cached.data);
+          renderFooter();
         } else {
           renderError();
+          renderFooter();
         }
       }
     });
@@ -85,18 +94,18 @@
       state.cfg = WC.tablesConfig.parse(widgetConfig);
 
       buildLayout();
+      renderHeader();
       WC.height.observe(container, state.widgetApi);
       WC.brand.apply(state.widgetApi, state.cfg.accentColor);
 
       var cached = WC.cache.get(CACHE_KEY);
       if (cached && cached.data) {
         state.savedAt = cached.savedAt;
-        renderHeader();
         renderGrid(cached.data);
       } else {
-        renderHeader();
         renderSkeleton();
       }
+      renderFooter();
       startPoller();
 
       if (typeof state.widgetApi.onReady === 'function') state.widgetApi.onReady().catch(function () {});

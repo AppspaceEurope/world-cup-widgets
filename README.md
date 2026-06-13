@@ -39,6 +39,7 @@ Every setting has a default, so both widgets work with no configuration. Setting
 |---------|------|---------|--------------|
 | Widget title | Text | `World Cup` | Shown above the match list. Leave empty to hide the title. |
 | Days ahead to browse | Number (0 to 30) | `7` | How many future days the day pager can reach. `0` shows today only. |
+| Days behind to browse | Number (0 to 14) | `3` | How many previous days the day pager can reach. `0` shows no past days. |
 | Scorers shown per match | Number (0 to 10) | `3` | Goal scorers listed under each match before the "+n more" link. `0` hides scorers. |
 | Show venue in match detail | Toggle | On | Whether the match-detail view shows the stadium and city. |
 | Accent colour override | Colour | (empty) | A specific accent colour. Leave empty to use your Appspace brand colour. |
