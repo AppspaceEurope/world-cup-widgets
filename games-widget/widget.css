@@ -126,28 +126,7 @@
 }
 .wc-more:hover { text-decoration: underline; }
 
-/* --- Match-detail modal --- */
-.wc-modal-backdrop {
-  position: fixed; inset: 0; z-index: 9999;
-  display: flex; align-items: center; justify-content: center;
-  background: rgba(15, 23, 42, 0.45);
-  padding: 16px;
-}
-/* When the host provides the modal frame, the iframe IS the modal — go full-bleed. */
-.wc-modal-backdrop.is-host-modal { position: static; inset: auto; background: transparent; padding: 0; display: block; }
-
-.wc-modal-panel {
-  width: 100%;
-  max-width: 560px;
-  max-height: 90vh;
-  overflow: auto;
-  background: var(--wc-surface);
-  border-radius: var(--wc-radius);
-  padding: 20px;
-  box-shadow: 0 8px 40px rgba(15, 23, 42, 0.25);
-}
-.is-host-modal .wc-modal-panel { max-width: none; max-height: none; box-shadow: none; border-radius: 0; }
-
+/* --- Match-detail modal (shell styles are shared in base.css) --- */
 .wc-modal-head { text-align: center; margin-bottom: 16px; }
 .wc-modal-score {
   display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; margin-top: 6px;
@@ -174,16 +153,29 @@
   font-size: 0.76rem; color: var(--wc-text-muted); text-align: center;
   margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--wc-border);
 }
-.wc-modal-close {
-  display: block; margin: 16px auto 0;
-  font: inherit; font-size: 0.84rem; font-weight: 600;
-  color: var(--wc-on-accent); background: var(--wc-accent);
-  border: 0; border-radius: var(--wc-radius-sm); padding: 8px 22px; cursor: pointer;
+
+/* --- Lineups (in match detail) --- */
+.wc-lineups-slot { margin-top: 12px; }
+.wc-lineups-loading { font-size: 0.8rem; color: var(--wc-text-muted); text-align: center; padding: 8px 0; }
+.wc-lineups-title {
+  font-family: var(--wc-font-head); font-weight: 700; font-size: 0.82rem;
+  text-align: center; margin: 8px 0; padding-top: 10px; border-top: 1px solid var(--wc-border);
 }
-.wc-modal-close:hover { background: var(--wc-accent-dark); }
+.wc-lineups { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.wc-lineup-team { font-weight: 700; font-size: 0.82rem; }
+.wc-lineup-formation { font-size: 0.72rem; color: var(--wc-text-muted); margin-bottom: 6px; }
+.wc-lineup-player { display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 6px; font-size: 0.78rem; padding: 2px 0; }
+.wc-lineup-jersey { color: var(--wc-text-faint); text-align: center; font-variant-numeric: tabular-nums; }
+.wc-lineup-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wc-lineup-pos { font-size: 0.64rem; color: var(--wc-text-faint); }
+.wc-lineup-subs-label {
+  font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em;
+  color: var(--wc-text-faint); margin: 8px 0 4px; padding-top: 6px; border-top: 1px dashed var(--wc-border);
+}
 
 /* --- Narrow (sidebar) treatment --- */
 @media (max-width: 420px) {
   .wc-team-name { font-size: 0.84rem; }
   .wc-modal-vs { font-size: 1.3rem; }
+  .wc-lineups { grid-template-columns: 1fr; gap: 8px; }
 }

@@ -4,8 +4,8 @@ Two custom widgets for the Appspace Employee App that show **FIFA World Cup 2026
 
 | Widget | What it shows |
 |--------|---------------|
-| **World Cup Games** | Today's matches (live scores, kick-off times, final scores), a browsable day pager for upcoming days, goal scorers, placeholders for undecided knockout teams, and a tap-through match-detail view. |
-| **World Cup Tables** | All 12 group standings (or a chosen subset), with live points, goal difference and qualification positions. |
+| **World Cup Games** | Matches (live scores, kick-off times, final scores) with a browsable day pager for previous and upcoming days, goal scorers, placeholders for undecided knockout teams, and a tap-through match-detail view with lineups and formation. |
+| **World Cup Tables** | All 12 group standings (or a chosen subset), with live points, goal difference and qualification positions. Click a team for its recent results and upcoming fixtures. |
 
 Both have a transparent background and no border, pick up your Appspace brand colour automatically, and are responsive from a narrow sidebar to a wide column.
 
@@ -42,6 +42,7 @@ Every setting has a default, so both widgets work with no configuration. Setting
 | Days behind to browse | Number (0 to 14) | `3` | How many previous days the day pager can reach. `0` shows no past days. |
 | Scorers shown per match | Number (0 to 10) | `3` | Goal scorers listed under each match before the "+n more" link. `0` hides scorers. |
 | Show venue in match detail | Toggle | On | Whether the match-detail view shows the stadium and city. |
+| Show lineups in match detail | Toggle | On | Load team lineups and formation in the match-detail view (when announced). |
 | Accent colour override | Colour | (empty) | A specific accent colour. Leave empty to use your Appspace brand colour. |
 | Live refresh interval | Number, seconds (30 to 600) | `60` | How often scores refresh while a match is in play. |
 | Idle refresh interval | Number, minutes (5 to 120) | `10` | How often fixtures refresh when nothing is live. |
@@ -52,6 +53,7 @@ Every setting has a default, so both widgets work with no configuration. Setting
 |---------|------|---------|--------------|
 | Widget title | Text | `Group Tables` | Shown above the tables. Leave empty to hide the title. |
 | Groups to show | Multi-select (A to L) | (empty) | Which group tables to display. Leave empty to show all 12 groups. |
+| Team detail on click | Toggle | On | Click a team to open its recent results and upcoming fixtures. Turn off for display-only tables. |
 | Accent colour override | Colour | (empty) | A specific accent colour. Leave empty to use your Appspace brand colour. |
 | Refresh interval | Number, minutes (5 to 240) | `15` | How often the standings refresh. |
 

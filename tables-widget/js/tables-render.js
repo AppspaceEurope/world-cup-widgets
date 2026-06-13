@@ -28,14 +28,24 @@
     return s;
   }
 
-  function teamCell(team) {
-    var cell = el('div', 'wc-std-team');
+  function teamCell(team, onSelectTeam) {
+    var clickable = typeof onSelectTeam === 'function' && !team.isTbd;
+    var cell = el('div', {
+      class: 'wc-std-team' + (clickable ? ' wc-clickable' : ''),
+      role: clickable ? 'button' : null,
+      tabindex: clickable ? 0 : null,
+      aria: clickable ? { label: team.name + ' — results and fixtures' } : null,
+      on: clickable ? {
+        click: function () { onSelectTeam(team); },
+        keydown: function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); onSelectTeam(team); } }
+      } : null
+    });
     cell.appendChild(WC.teams.badge(team, 20));
     cell.appendChild(el('span', { class: 'wc-std-name', text: team.name }));
     return cell;
   }
 
-  function groupTable(group) {
+  function groupTable(group, onSelectTeam) {
     var card = el('div', 'wc-group-card');
     card.appendChild(el('div', { class: 'wc-group-title', text: group.name }));
 
@@ -53,7 +63,7 @@
     group.entries.forEach(function (en) {
       var row = el('div', { class: 'wc-std-row' + (en.qualifies ? ' is-q' : ''), role: 'row' });
       row.appendChild(el('span', { class: 'wc-std-rank', text: en.rank || '' }));
-      row.appendChild(teamCell(en.team));
+      row.appendChild(teamCell(en.team, onSelectTeam));
       var stats = [
         ['p', en.played], ['w', en.won], ['d', en.drawn], ['l', en.lost],
         ['gf', en.gf], ['ga', en.ga], ['gd', en.gd], ['pts', en.points]
@@ -71,7 +81,7 @@
     return card;
   }
 
-  function grid(groups, cfg) {
+  function grid(groups, cfg, onSelectTeam) {
     var wrap = el('div', 'wc-grid');
     var wanted = cfg.groups && cfg.groups.length
       ? groups.filter(function (g) { return cfg.groups.indexOf(g.letter) !== -1; })
@@ -80,7 +90,8 @@
       wrap.appendChild(el('div', { class: 'wc-empty', text: 'No standings available yet.' }));
       return wrap;
     }
-    wanted.forEach(function (g) { wrap.appendChild(groupTable(g)); });
+    var handler = cfg.teamDetail ? onSelectTeam : null;
+    wanted.forEach(function (g) { wrap.appendChild(groupTable(g, handler)); });
     return wrap;
   }
 

@@ -1,8 +1,8 @@
 {
   "templateKey": "world-cup-tables",
   "name": "World Cup Tables",
-  "version": "1.0.2",
-  "description": "FIFA World Cup group standings for all 12 groups or a chosen subset, with live points, goal difference and qualification positions.",
+  "version": "1.1.0",
+  "description": "FIFA World Cup group standings for all 12 groups or a chosen subset, with live points, goal difference, qualification positions, and click-through to each team's results and fixtures.",
   "icon": "images/icon.svg",
   "author": {
     "name": "Mike Gibbs",
@@ -53,6 +53,15 @@
         "validation": { "required": false }
       },
       {
+        "name": "teamDetail",
+        "type": "boolean",
+        "label": "Team detail on click",
+        "description": "Click a team to see its recent results and upcoming fixtures.",
+        "groupName": "Content",
+        "groupKey": "content",
+        "default": true
+      },
+      {
         "name": "accentColor",
         "type": "colorPicker",
         "label": "Accent colour override",
@@ -74,7 +83,8 @@
     ]
   },
   "analyticsEvents": [
-    { "name": "refreshFailed", "metadataKeys": ["reason", "endpoint"] }
+    { "name": "refreshFailed", "metadataKeys": ["reason", "endpoint"] },
+    { "name": "teamDetailOpened", "metadataKeys": ["teamId", "team"] }
   ],
   "appspaceApis": [
     { "label": "Get Brand Profiles", "name": "getBrandProfiles", "path": "theme/brandprofiles", "method": "GET" }

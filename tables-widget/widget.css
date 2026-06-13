@@ -55,6 +55,37 @@
 .wc-std-stat { text-align: center; color: var(--wc-text-muted); font-variant-numeric: tabular-nums; }
 .wc-std-stat.is-pts { font-weight: 700; color: var(--wc-text); }
 
+/* Clickable team rows */
+.wc-std-team.wc-clickable { cursor: pointer; border-radius: var(--wc-radius-sm); }
+.wc-std-team.wc-clickable:hover .wc-std-name { color: var(--wc-accent); text-decoration: underline; }
+
+/* --- Team detail panel (modal shell is shared in base.css) --- */
+.wc-tm-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.wc-tm-name { font-family: var(--wc-font-head); font-weight: 700; font-size: 1.1rem; }
+.wc-tm-section { margin-bottom: 14px; }
+.wc-tm-section-title {
+  font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em;
+  color: var(--wc-text-faint); margin-bottom: 6px;
+}
+.wc-tm-loading { font-size: 0.82rem; color: var(--wc-text-muted); padding: 8px 0; }
+.wc-tm-row { padding: 7px 10px; border-radius: var(--wc-radius-sm); background: var(--wc-surface-2); margin-bottom: 4px; }
+.wc-tm-teams { display: flex; align-items: center; gap: 8px; font-size: 0.86rem; }
+.wc-tm-team { display: inline-flex; align-items: center; gap: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wc-tm-vs { color: var(--wc-text-faint); font-size: 0.78rem; }
+.wc-tm-result {
+  flex: 0 0 auto; width: 20px; height: 20px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.66rem; font-weight: 700; color: #fff;
+}
+.wc-tm-result.is-w { background: var(--wc-positive); }
+.wc-tm-result.is-l { background: var(--wc-live); }
+.wc-tm-result.is-d { background: var(--wc-text-faint); }
+.wc-tm-time {
+  flex: 0 0 auto; min-width: 44px; font-family: var(--wc-font-head); font-weight: 700;
+  font-size: 0.74rem; color: var(--wc-text-muted); font-variant-numeric: tabular-nums;
+}
+.wc-tm-meta { font-size: 0.68rem; color: var(--wc-text-faint); margin-top: 3px; padding-left: 28px; }
+
 /* Narrow (sidebar): drop W/D/L/GF/GA to keep P / GD / Pts legible. */
 @media (max-width: 360px) {
   .wc-std-row { grid-template-columns: 16px 1fr 22px 26px 26px; }

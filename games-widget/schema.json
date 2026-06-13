@@ -1,8 +1,8 @@
 {
   "templateKey": "world-cup-games",
   "name": "World Cup Games",
-  "version": "1.0.2",
-  "description": "Live scores, fixtures and results for the FIFA World Cup. Browse previous, today's and upcoming matches, with goal scorers and a match-detail view.",
+  "version": "1.1.0",
+  "description": "Live scores, fixtures and results for the FIFA World Cup. Browse previous, today's and upcoming matches, with goal scorers, lineups and a match-detail view.",
   "icon": "images/icon.svg",
   "author": {
     "name": "Mike Gibbs",
@@ -62,6 +62,15 @@
         "name": "showVenue",
         "type": "boolean",
         "label": "Show venue in match detail",
+        "groupName": "Display",
+        "groupKey": "display",
+        "default": true
+      },
+      {
+        "name": "showLineups",
+        "type": "boolean",
+        "label": "Show lineups in match detail",
+        "description": "Load team lineups and formation in the match-detail view (when announced).",
         "groupName": "Display",
         "groupKey": "display",
         "default": true

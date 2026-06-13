@@ -1,0 +1,59 @@
+/* wc-modal.js — generic modal shell shared by Games + Tables. Registers WC.modal.
+ * Primary: host modal via setViewMode('modalLarge'). Fallback: inline overlay
+ * inside the widget iframe when setViewMode is unavailable or rejects.
+ *
+ * WC.modal.open({ build, widgetApi }) — build(close) returns the panel node and
+ *   wires its own close control via the passed close fn. Single instance.
+ * WC.modal.close() */
+(function () {
+  'use strict';
+  var WC = (window.WC = window.WC || {});
+  var el = WC.dom.el;
+
+  var current = null; // { backdrop, widgetApi, usedHostModal }
+
+  function onKey(ev) { if (ev.key === 'Escape') close(); }
+
+  function close() {
+    if (!current) return;
+    var c = current;
+    current = null;
+    if (c.backdrop && c.backdrop.parentNode) c.backdrop.parentNode.removeChild(c.backdrop);
+    if (c.usedHostModal && c.widgetApi && typeof c.widgetApi.setViewMode === 'function') {
+      c.widgetApi.setViewMode('default').catch(function () {});
+    }
+    document.removeEventListener('keydown', onKey);
+  }
+
+  function open(opts) {
+    opts = opts || {};
+    var widgetApi = opts.widgetApi;
+    close(); // ensure single instance
+
+    var backdrop = el('div', 'wc-modal-backdrop');
+    var panel = opts.build ? opts.build(close) : el('div', 'wc-modal-panel');
+    backdrop.appendChild(panel);
+    // Clicking the dim area closes the inline fallback (host modal manages its own backdrop).
+    backdrop.addEventListener('click', function (ev) { if (ev.target === backdrop) close(); });
+    document.body.appendChild(backdrop);
+    document.addEventListener('keydown', onKey);
+
+    var usedHostModal = false;
+    if (widgetApi && typeof widgetApi.setViewMode === 'function') {
+      usedHostModal = true;
+      backdrop.classList.add('is-host-modal'); // host draws the dim; we go full-bleed
+      widgetApi.setViewMode('modalLarge').catch(function () {
+        backdrop.classList.remove('is-host-modal');
+        if (current) current.usedHostModal = false;
+      });
+    }
+
+    current = { backdrop: backdrop, widgetApi: widgetApi, usedHostModal: usedHostModal };
+
+    var first = panel.querySelector('.wc-modal-close');
+    if (first) first.focus();
+    return { panel: panel, close: close };
+  }
+
+  WC.modal = { open: open, close: close };
+})();

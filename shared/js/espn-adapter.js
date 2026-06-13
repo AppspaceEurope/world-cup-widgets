@@ -58,6 +58,14 @@
     return '';
   }
 
+  // Scoreboard gives a plain score; the team-schedule endpoint gives a {$ref}
+  // object instead — treat any non-primitive score as absent.
+  function plainScore(s) {
+    if (s == null) return '';
+    if (typeof s === 'object') return (s.displayValue != null ? String(s.displayValue) : '');
+    return String(s);
+  }
+
   function normalizeCompetitor(c) {
     var t = (c && c.team) || {};
     return {
@@ -66,8 +74,8 @@
       shortName: t.shortDisplayName || t.abbreviation || t.displayName || 'TBD',
       abbr: t.abbreviation || '',
       logo: teamLogo(t),
-      score: c && c.score != null ? String(c.score) : '',
-      shootout: c && c.shootoutScore != null ? String(c.shootoutScore) : '',
+      score: plainScore(c && c.score),
+      shootout: plainScore(c && c.shootoutScore),
       winner: !!(c && c.winner),
       isTbd: isTbd(t)
     };
@@ -202,10 +210,66 @@
     });
   }
 
+  // --- Team schedule (previous results + upcoming fixtures) ---------------
+
+  function teamScheduleUrl(teamId) {
+    if (cfg.mockName) return 'shared/mock/team-schedule.json';
+    return SITE + '/teams/' + teamId + '/schedule';
+  }
+
+  function fetchTeamSchedule(teamId) {
+    return fetchJson(teamScheduleUrl(teamId)).then(function (data) {
+      var t = data.team || {};
+      var matches = (data.events || []).map(normalizeMatch).filter(Boolean);
+      var past = matches.filter(function (m) { return m.state === 'post'; })
+        .sort(function (a, b) { return new Date(b.dateUtc) - new Date(a.dateUtc); }); // newest first
+      var future = matches.filter(function (m) { return m.state !== 'post'; })
+        .sort(function (a, b) { return new Date(a.dateUtc) - new Date(b.dateUtc); }); // soonest first
+      return {
+        team: { id: t.id || teamId, name: t.displayName || t.name || '', logo: teamLogo(t) },
+        past: past,
+        future: future
+      };
+    });
+  }
+
+  // --- Match summary (lineups / formation) --------------------------------
+
+  function summaryUrl(eventId) {
+    if (cfg.mockName) return 'shared/mock/match-summary.json';
+    return SITE + '/summary?event=' + eventId;
+  }
+
+  function fetchMatchSummary(eventId) {
+    return fetchJson(summaryUrl(eventId)).then(function (data) {
+      var lineups = (data.rosters || []).map(function (r) {
+        var players = (r.roster || []).map(function (p) {
+          var a = p.athlete || {};
+          return {
+            name: a.displayName || a.shortName || a.lastName || '',
+            pos: (p.position && p.position.abbreviation) || '',
+            jersey: p.jersey != null ? String(p.jersey) : '',
+            starter: !!p.starter
+          };
+        });
+        return {
+          teamId: (r.team && r.team.id) || '',
+          name: (r.team && r.team.displayName) || '',
+          formation: r.formation || '',
+          starters: players.filter(function (x) { return x.starter; }),
+          subs: players.filter(function (x) { return !x.starter; })
+        };
+      });
+      return { lineups: lineups };
+    }).catch(function () { return { lineups: [] }; });
+  }
+
   WC.espn = {
     configureFromUrl: configureFromUrl,
     fetchScoreboard: fetchScoreboard,
     fetchStandings: fetchStandings,
+    fetchTeamSchedule: fetchTeamSchedule,
+    fetchMatchSummary: fetchMatchSummary,
     _config: cfg
   };
 })();

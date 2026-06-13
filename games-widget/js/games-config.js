@@ -29,6 +29,7 @@
       daysBehind: num(c, 'daysBehind', 3, 0, 14),
       maxScorersShown: num(c, 'maxScorersShown', 3, 0, 10),
       showVenue: bool(c, 'showVenue', true),
+      showLineups: bool(c, 'showLineups', true),
       accentColor: str(c, 'accentColor', ''),
       livePollSeconds: num(c, 'livePollSeconds', 60, 30, 600),
       idlePollMinutes: num(c, 'idlePollMinutes', 10, 5, 120)

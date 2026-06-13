@@ -6,8 +6,6 @@
   var WC = (window.WC = window.WC || {});
   var el = WC.dom.el;
 
-  var current = null; // { backdrop, widgetApi, usedHostModal }
-
   function timeline(match) {
     var list = el('div', 'wc-timeline');
     var evts = (match.events || []).slice();
@@ -70,6 +68,9 @@
 
     panel.appendChild(timeline(match));
 
+    // Lineups load asynchronously after open() — placeholder slot here.
+    if (cfg.showLineups) panel.appendChild(el('div', 'wc-lineups-slot'));
+
     if (cfg.showVenue && match.venue && match.venue.name) {
       var v = [match.venue.name, match.venue.city, match.venue.country].filter(Boolean).join(', ');
       panel.appendChild(el('div', { class: 'wc-modal-venue', text: v }));
@@ -82,53 +83,65 @@
     return panel;
   }
 
-  function close() {
-    if (!current) return;
-    var c = current;
-    current = null;
-    if (c.backdrop && c.backdrop.parentNode) c.backdrop.parentNode.removeChild(c.backdrop);
-    if (c.usedHostModal && c.widgetApi && typeof c.widgetApi.setViewMode === 'function') {
-      c.widgetApi.setViewMode('default').catch(function () {});
+  // --- Lineups (loaded async after open) ---
+  function lineupColumn(lineup) {
+    var col = el('div', 'wc-lineup-col');
+    col.appendChild(el('div', { class: 'wc-lineup-team', text: lineup.name }));
+    if (lineup.formation) col.appendChild(el('div', { class: 'wc-lineup-formation', text: lineup.formation }));
+    function playerRow(p) {
+      var r = el('div', 'wc-lineup-player');
+      r.appendChild(el('span', { class: 'wc-lineup-jersey', text: p.jersey || '' }));
+      r.appendChild(el('span', { class: 'wc-lineup-name', text: p.name }));
+      if (p.pos) r.appendChild(el('span', { class: 'wc-lineup-pos', text: p.pos }));
+      return r;
     }
-    document.removeEventListener('keydown', onKey);
+    lineup.starters.forEach(function (p) { col.appendChild(playerRow(p)); });
+    if (lineup.subs && lineup.subs.length) {
+      col.appendChild(el('div', { class: 'wc-lineup-subs-label', text: 'Substitutes' }));
+      lineup.subs.forEach(function (p) { col.appendChild(playerRow(p)); });
+    }
+    return col;
   }
 
-  function onKey(ev) { if (ev.key === 'Escape') close(); }
+  function renderLineups(slot, match, summary) {
+    WC.dom.clear(slot);
+    var lineups = (summary && summary.lineups) || [];
+    if (!lineups.length || !lineups.some(function (l) { return l.starters && l.starters.length; })) {
+      slot.appendChild(el('div', { class: 'wc-empty', text: 'Lineups not announced yet.' }));
+      return;
+    }
+    slot.appendChild(el('div', { class: 'wc-lineups-title', text: 'Lineups' }));
+    var grid = el('div', 'wc-lineups');
+    var home = lineups.filter(function (l) { return l.teamId === match.home.id; })[0] || lineups[0];
+    var away = lineups.filter(function (l) { return l.teamId === match.away.id; })[0] || lineups[1];
+    if (home) grid.appendChild(lineupColumn(home));
+    if (away) grid.appendChild(lineupColumn(away));
+    slot.appendChild(grid);
+  }
 
   function open(match, cfg, widgetApi) {
-    close(); // ensure single instance
+    var handle = WC.modal.open({
+      build: function (close) { return buildPanel(match, cfg, close); },
+      widgetApi: widgetApi
+    });
 
-    var backdrop = el('div', 'wc-modal-backdrop');
-    var panel = buildPanel(match, cfg, close);
-    backdrop.appendChild(panel);
-    // Clicking the dim area closes the inline fallback (host modal manages its own backdrop).
-    backdrop.addEventListener('click', function (ev) { if (ev.target === backdrop) close(); });
-    document.body.appendChild(backdrop);
-    document.addEventListener('keydown', onKey);
-
-    var usedHostModal = false;
-    if (widgetApi && typeof widgetApi.setViewMode === 'function') {
-      usedHostModal = true;
-      backdrop.classList.add('is-host-modal'); // host draws the dim; we go full-bleed
-      widgetApi.setViewMode('modalLarge').catch(function () {
-        // Host rejected — fall back to inline overlay styling.
-        backdrop.classList.remove('is-host-modal');
-        if (current) current.usedHostModal = false;
-      });
-    }
-
-    current = { backdrop: backdrop, widgetApi: widgetApi, usedHostModal: usedHostModal };
-
-    // Analytics (best-effort).
     if (widgetApi && typeof widgetApi.raiseAnalyticsEvent === 'function') {
       widgetApi.raiseAnalyticsEvent('matchDetailOpened', {
         matchId: match.id, home: match.home.name, away: match.away.name, status: match.state
       }).catch(function () {});
     }
 
-    var first = panel.querySelector('.wc-modal-close');
-    if (first) first.focus();
+    // Lineups: load on demand into the placeholder slot.
+    var slot = handle.panel.querySelector('.wc-lineups-slot');
+    if (cfg.showLineups && slot && match.id && WC.espn.fetchMatchSummary) {
+      slot.appendChild(el('div', { class: 'wc-lineups-loading', text: 'Loading lineups…' }));
+      WC.espn.fetchMatchSummary(match.id).then(function (summary) {
+        renderLineups(slot, match, summary);
+      }).catch(function () {
+        renderLineups(slot, match, { lineups: [] });
+      });
+    }
   }
 
-  WC.gamesModal = { open: open, close: close };
+  WC.gamesModal = { open: open, close: function () { WC.modal.close(); } };
 })();

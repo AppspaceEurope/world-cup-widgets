@@ -34,9 +34,13 @@
     if (bar) slots.footer.appendChild(bar);
   }
 
+  function onSelectTeam(team) {
+    WC.tablesModal.open(team, state.cfg, state.widgetApi);
+  }
+
   function renderGrid(data) {
     WC.dom.clear(slots.content);
-    slots.content.appendChild(WC.tablesRender.grid((data && data.groups) || [], state.cfg));
+    slots.content.appendChild(WC.tablesRender.grid((data && data.groups) || [], state.cfg, onSelectTeam));
   }
 
   function renderSkeleton() {

@@ -20,12 +20,18 @@
     if (typeof v === 'string' && v) return v.split(',').map(function (s) { return s.trim(); });
     return [];
   }
+  function bool(c, name, def) {
+    var v = c[name] && c[name].value;
+    if (v == null) return def;
+    return v === true || v === 'true';
+  }
 
   function parse(widgetConfig) {
     var c = (widgetConfig && widgetConfig.data && widgetConfig.data.configuration) || {};
     return {
       title: str(c, 'title', ''),
       groups: list(c, 'groups'),           // [] = all
+      teamDetail: bool(c, 'teamDetail', true),
       accentColor: str(c, 'accentColor', ''),
       refreshMinutes: num(c, 'refreshMinutes', 15, 5, 240)
     };
