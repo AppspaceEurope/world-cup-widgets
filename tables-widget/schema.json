@@ -1,7 +1,7 @@
 {
   "templateKey": "world-cup-tables",
   "name": "World Cup Tables",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "FIFA World Cup group standings for all 12 groups or a chosen subset, with live points, goal difference, qualification positions, and click-through to each team's results and fixtures.",
   "icon": "images/icon.svg",
   "author": {

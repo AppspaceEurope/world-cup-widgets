@@ -21,7 +21,7 @@
     if (!played) {
       line.appendChild(el('span', { class: 'wc-tm-time', text: WC.dom.fmtKickoff(m.dateUtc) }));
     }
-    line.appendChild(el('span', { class: 'wc-tm-vs', text: isHome ? 'v' : '@' }));
+    line.appendChild(el('span', { class: 'wc-tm-vs', text: isHome ? 'vs' : 'at' }));
     var oppCell = el('span', 'wc-tm-team');
     oppCell.appendChild(WC.teams.badge(opp, 16));
     oppCell.appendChild(el('span', { text: ' ' + (opp.shortName || opp.name) }));
