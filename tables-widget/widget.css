@@ -84,6 +84,15 @@
   flex: 0 0 auto; min-width: 44px; font-family: var(--wc-font-head); font-weight: 700;
   font-size: 0.74rem; color: var(--wc-text-muted); font-variant-numeric: tabular-nums;
 }
+.wc-tm-score {
+  margin-left: auto; flex: 0 0 auto; font-family: var(--wc-font-head); font-weight: 700;
+  font-size: 0.92rem; font-variant-numeric: tabular-nums; color: var(--wc-text);
+}
+.wc-tm-scorers { display: flex; flex-wrap: wrap; gap: 3px 12px; margin-top: 5px; padding-left: 28px; }
+.wc-tm-scorer { display: inline-flex; align-items: center; gap: 5px; font-size: 0.74rem; color: var(--wc-text-muted); }
+.wc-tm-dot { width: 6px; height: 6px; border-radius: 50%; flex: 0 0 auto; }
+.wc-tm-dot.is-own { background: var(--wc-positive); }
+.wc-tm-dot.is-opp { background: var(--wc-text-faint); }
 .wc-tm-meta { font-size: 0.68rem; color: var(--wc-text-faint); margin-top: 3px; padding-left: 28px; }
 
 /* Narrow (sidebar): drop W/D/L/GF/GA to keep P / GD / Pts legible. */

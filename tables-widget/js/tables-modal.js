@@ -6,16 +6,17 @@
   var WC = (window.WC = window.WC || {});
   var el = WC.dom.el;
 
-  // Opponent-centric row, relative to the focused team. The schedule feed does
-  // not carry an inline score, so past games show a W/D/L result, not a scoreline.
+  // Opponent-centric row, relative to the focused team. Played games show the
+  // scoreline (focused team first), a W/D/L badge, and the goalscorers.
   function matchRow(m, teamId) {
     var isHome = m.home.id === teamId;
     var focused = isHome ? m.home : m.away;
     var opp = isHome ? m.away : m.home;
+    var played = m.state === 'post';
     var row = el('div', 'wc-tm-row');
 
     var line = el('div', 'wc-tm-teams');
-    if (m.state === 'post') {
+    if (played) {
       var result = (!m.home.winner && !m.away.winner) ? 'D' : (focused.winner ? 'W' : 'L');
       line.appendChild(el('span', { class: 'wc-tm-result is-' + result.toLowerCase(), text: result }));
     } else {
@@ -26,7 +27,30 @@
     oppCell.appendChild(WC.teams.badge(opp, 16));
     oppCell.appendChild(el('span', { text: ' ' + (opp.shortName || opp.name) }));
     line.appendChild(oppCell);
+    if (played) {
+      line.appendChild(el('span', { class: 'wc-tm-score', text: focused.score + '–' + opp.score }));
+    }
     row.appendChild(line);
+
+    // Goalscorers (played games only).
+    if (played) {
+      var goals = (m.events || []).filter(function (e) { return e.kind === 'goal'; });
+      if (goals.length) {
+        var sc = el('div', 'wc-tm-scorers');
+        goals.forEach(function (g) {
+          var own = g.teamId === teamId;
+          var item = el('span', 'wc-tm-scorer');
+          item.appendChild(el('span', 'wc-tm-dot ' + (own ? 'is-own' : 'is-opp')));
+          var suffix = [];
+          if (g.minute) suffix.push(g.minute);
+          if (g.penalty) suffix.push('pen');
+          if (g.ownGoal) suffix.push('OG');
+          item.appendChild(el('span', { text: (g.player || 'Goal') + (suffix.length ? ' ' + suffix.join(' ') : '') }));
+          sc.appendChild(item);
+        });
+        row.appendChild(sc);
+      }
+    }
 
     var meta = el('div', 'wc-tm-meta');
     meta.textContent = WC.dom.fmtDayLabel(m.dateUtc) + (m.groupNote ? ' · ' + m.groupNote : '');
