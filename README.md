@@ -31,9 +31,28 @@ Both widgets work with no configuration; every setting has a sensible default.
 
 ## Configuration
 
-**World Cup Games**: widget title · days ahead to browse (0 to 30) · scorers shown per match (0 to 10) · show venue in match detail · accent colour override · live refresh interval (30 to 600s) · idle refresh interval (5 to 120min).
+Every setting has a default, so both widgets work with no configuration. Settings appear in the widget's configuration panel when you add it to a homepage.
 
-**World Cup Tables**: widget title · groups to show (any of A to L, or leave empty for all 12) · accent colour override · refresh interval (5 to 240min).
+### World Cup Games
+
+| Setting | Type | Default | What it does |
+|---------|------|---------|--------------|
+| Widget title | Text | `World Cup` | Shown above the match list. Leave empty to hide the title. |
+| Days ahead to browse | Number (0 to 30) | `7` | How many future days the day pager can reach. `0` shows today only. |
+| Scorers shown per match | Number (0 to 10) | `3` | Goal scorers listed under each match before the "+n more" link. `0` hides scorers. |
+| Show venue in match detail | Toggle | On | Whether the match-detail view shows the stadium and city. |
+| Accent colour override | Colour | (empty) | A specific accent colour. Leave empty to use your Appspace brand colour. |
+| Live refresh interval | Number, seconds (30 to 600) | `60` | How often scores refresh while a match is in play. |
+| Idle refresh interval | Number, minutes (5 to 120) | `10` | How often fixtures refresh when nothing is live. |
+
+### World Cup Tables
+
+| Setting | Type | Default | What it does |
+|---------|------|---------|--------------|
+| Widget title | Text | `Group Tables` | Shown above the tables. Leave empty to hide the title. |
+| Groups to show | Multi-select (A to L) | (empty) | Which group tables to display. Leave empty to show all 12 groups. |
+| Accent colour override | Colour | (empty) | A specific accent colour. Leave empty to use your Appspace brand colour. |
+| Refresh interval | Number, minutes (5 to 240) | `15` | How often the standings refresh. |
 
 ## Data source
 
