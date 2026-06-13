@@ -211,22 +211,37 @@
   }
 
   // --- Team schedule (previous results + upcoming fixtures) ---------------
+  // ESPN's /teams/{id}/schedule only returns a team's *played* games for the
+  // World Cup, so it never shows upcoming fixtures. Instead pull a date-range
+  // scoreboard covering the tournament window and filter for the team — that
+  // carries both results and future fixtures.
 
-  function teamScheduleUrl(teamId) {
+  function ymd(offsetDays) {
+    var d = new Date();
+    d.setDate(d.getDate() + offsetDays);
+    return d.getFullYear().toString() +
+      String(d.getMonth() + 1).padStart(2, '0') +
+      String(d.getDate()).padStart(2, '0');
+  }
+
+  function teamScheduleUrl() {
     if (cfg.mockName) return 'shared/mock/team-schedule.json';
-    return SITE + '/teams/' + teamId + '/schedule';
+    // Rolling window wide enough to cover the whole tournament from any vantage.
+    return SITE + '/scoreboard?dates=' + ymd(-40) + '-' + ymd(50) + '&limit=400';
   }
 
   function fetchTeamSchedule(teamId) {
-    return fetchJson(teamScheduleUrl(teamId)).then(function (data) {
-      var t = data.team || {};
-      var matches = (data.events || []).map(normalizeMatch).filter(Boolean);
+    var id = String(teamId);
+    return fetchJson(teamScheduleUrl()).then(function (data) {
+      var all = (data.events || []).map(normalizeMatch).filter(Boolean);
+      var mine = all.filter(function (m) { return m.home.id === id || m.away.id === id; });
+      var matches = mine.length ? mine : all; // mock fixtures use a fixed team
       var past = matches.filter(function (m) { return m.state === 'post'; })
         .sort(function (a, b) { return new Date(b.dateUtc) - new Date(a.dateUtc); }); // newest first
       var future = matches.filter(function (m) { return m.state !== 'post'; })
         .sort(function (a, b) { return new Date(a.dateUtc) - new Date(b.dateUtc); }); // soonest first
       return {
-        team: { id: t.id || teamId, name: t.displayName || t.name || '', logo: teamLogo(t) },
+        team: { id: id, name: '', logo: '' },
         past: past,
         future: future
       };
