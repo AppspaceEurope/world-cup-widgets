@@ -7,19 +7,18 @@
   var el = WC.dom.el;
 
   // Opponent-centric row, relative to the focused team. Played games show the
-  // scoreline (focused team first), a W/D/L badge, and the goalscorers.
+  // scoreline (focused team first) tinted by result, and the goalscorers.
   function matchRow(m, teamId) {
     var isHome = m.home.id === teamId;
     var focused = isHome ? m.home : m.away;
     var opp = isHome ? m.away : m.home;
     var played = m.state === 'post';
+    // win / loss / draw — drives the score colour (the only W/D/L cue).
+    var result = played ? ((!m.home.winner && !m.away.winner) ? 'd' : (focused.winner ? 'w' : 'l')) : '';
     var row = el('div', 'wc-tm-row');
 
     var line = el('div', 'wc-tm-teams');
-    if (played) {
-      var result = (!m.home.winner && !m.away.winner) ? 'D' : (focused.winner ? 'W' : 'L');
-      line.appendChild(el('span', { class: 'wc-tm-result is-' + result.toLowerCase(), text: result }));
-    } else {
+    if (!played) {
       line.appendChild(el('span', { class: 'wc-tm-time', text: WC.dom.fmtKickoff(m.dateUtc) }));
     }
     line.appendChild(el('span', { class: 'wc-tm-vs', text: isHome ? 'v' : '@' }));
@@ -28,7 +27,7 @@
     oppCell.appendChild(el('span', { text: ' ' + (opp.shortName || opp.name) }));
     line.appendChild(oppCell);
     if (played) {
-      line.appendChild(el('span', { class: 'wc-tm-score', text: focused.score + '–' + opp.score }));
+      line.appendChild(el('span', { class: 'wc-tm-score is-' + result, text: focused.score + '–' + opp.score }));
     }
     row.appendChild(line);
 

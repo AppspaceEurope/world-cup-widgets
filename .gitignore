@@ -8,3 +8,6 @@ Thumbs.db
 
 # Local-only agent context (points to internal vault paths — keep private)
 CLAUDE.md
+
+# Local preview/dev tooling (machine-specific)
+.claude/

@@ -72,14 +72,6 @@
 .wc-tm-teams { display: flex; align-items: center; gap: 8px; font-size: 0.86rem; }
 .wc-tm-team { display: inline-flex; align-items: center; gap: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .wc-tm-vs { color: var(--wc-text-faint); font-size: 0.78rem; }
-.wc-tm-result {
-  flex: 0 0 auto; width: 20px; height: 20px; border-radius: 50%;
-  display: inline-flex; align-items: center; justify-content: center;
-  font-size: 0.66rem; font-weight: 700; color: #fff;
-}
-.wc-tm-result.is-w { background: var(--wc-positive); }
-.wc-tm-result.is-l { background: var(--wc-live); }
-.wc-tm-result.is-d { background: var(--wc-text-faint); }
 .wc-tm-time {
   flex: 0 0 auto; min-width: 44px; font-family: var(--wc-font-head); font-weight: 700;
   font-size: 0.74rem; color: var(--wc-text-muted); font-variant-numeric: tabular-nums;
@@ -88,6 +80,10 @@
   margin-left: auto; flex: 0 0 auto; font-family: var(--wc-font-head); font-weight: 700;
   font-size: 0.92rem; font-variant-numeric: tabular-nums; color: var(--wc-text);
 }
+/* Score colour is the W/D/L cue: win green, loss red, draw neutral. */
+.wc-tm-score.is-w { color: var(--wc-positive); }
+.wc-tm-score.is-l { color: var(--wc-live); }
+.wc-tm-score.is-d { color: var(--wc-text-muted); }
 .wc-tm-scorers { display: flex; flex-wrap: wrap; gap: 3px 12px; margin-top: 5px; padding-left: 28px; }
 .wc-tm-scorer { display: inline-flex; align-items: center; gap: 5px; font-size: 0.74rem; color: var(--wc-text-muted); }
 .wc-tm-dot { width: 6px; height: 6px; border-radius: 50%; flex: 0 0 auto; }
