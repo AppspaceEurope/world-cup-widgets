@@ -1,6 +1,6 @@
 /* games-modal.js — match-detail view. Registers WC.gamesModal.
- * Primary: host modal via setViewMode('modalLarge'). Fallback: inline overlay
- * inside the widget iframe when setViewMode is unavailable or rejects. */
+ * Presentation is handled by the shared WC.modal shell (host modal via
+ * setViewMode, viewport-appropriate mode; inline overlay fallback). */
 (function () {
   'use strict';
   var WC = (window.WC = window.WC || {});
