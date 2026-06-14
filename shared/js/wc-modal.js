@@ -1,6 +1,13 @@
 /* wc-modal.js — generic modal shell shared by Games + Tables. Registers WC.modal.
- * Primary: host modal via setViewMode(<viewport-appropriate mode>). Fallback:
- * inline overlay inside the widget iframe when setViewMode is unavailable/rejects.
+ * Primary: host modal via setViewMode('modalFullScreen'). Fallback: inline
+ * overlay inside the widget iframe when setViewMode is unavailable/rejects.
+ *
+ * Why always full-screen: the host sizes the sized modes (modalLarge ≈ 800px)
+ * to a FIXED width with no viewport cap, so they overflow a phone. We can't read
+ * the device width to adapt — window.innerWidth inside a widget is the widget's
+ * own slot width, not the screen — so two widgets in differently sized slots
+ * would pick different modes on the same device. modalFullScreen (100vw × 100vh)
+ * is uniform across widgets and slots and always fits mobile.
  *
  * WC.modal.open({ build, widgetApi }) — build(close) returns the panel node and
  *   wires its own close control via the passed close fn. Single instance.
@@ -13,17 +20,6 @@
   var current = null; // { backdrop, widgetApi, usedHostModal }
 
   function onKey(ev) { if (ev.key === 'Escape') close(); }
-
-  // The host gives each modal mode a FIXED width (modalLarge ≈ 800px) with no
-  // viewport cap, so a wide mode overflows a phone. Pick the mode that fits the
-  // current viewport: full-screen on phones, a mid modal on small windows, the
-  // large modal only when there's room for it.
-  function pickViewMode() {
-    var w = window.innerWidth || document.documentElement.clientWidth || 800;
-    if (w < 600) return 'modalFullScreen'; // phones — fills 100vw × 100vh
-    if (w < 840) return 'modal';           // tablets / narrow windows — 560px
-    return 'modalLarge';                   // 800px
-  }
 
   function close() {
     if (!current) return;
@@ -61,10 +57,10 @@
     var usedHostModal = false;
     if (widgetApi && typeof widgetApi.setViewMode === 'function') {
       usedHostModal = true;
-      backdrop.classList.add('is-host-modal'); // host draws the dim; we go full-bleed
+      // Full-screen host modal: hide the widget's normal content while the modal
+      // is open (the fixed dim overlay covers it; hiding is belt-and-braces).
       if (root) root.style.display = 'none';
-      widgetApi.setViewMode(pickViewMode()).catch(function () {
-        backdrop.classList.remove('is-host-modal');
+      widgetApi.setViewMode('modalFullScreen').catch(function () {
         if (root) root.style.display = rootDisplay; // host rejected — fall back to inline
         if (current) current.usedHostModal = false;
       });

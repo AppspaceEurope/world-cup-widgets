@@ -1,7 +1,7 @@
 {
   "templateKey": "world-cup-games",
   "name": "World Cup Games",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Live scores, fixtures and results for the FIFA World Cup. Browse previous, today's and upcoming matches, with goal scorers, lineups and a match-detail view.",
   "icon": "images/icon.svg",
   "author": {

@@ -56,20 +56,21 @@ html, body {
 .wc-statusbar.is-stale { color: var(--wc-live); }
 
 /* --- Shared modal shell (used by Games match detail + Tables team panel) --- */
+/* The host modal is requested as modalFullScreen, so the iframe fills the
+ * screen. Both paths (host + inline fallback) render the same way: a dim
+ * full-overlay with a centred, capped card — fills the screen on a phone,
+ * stays a tidy panel on desktop. */
 .wc-modal-backdrop {
   position: fixed; inset: 0; z-index: 9999;
   display: flex; align-items: center; justify-content: center;
   background: rgba(15, 23, 42, 0.45);
   padding: 16px;
 }
-/* When the host provides the modal frame, the iframe IS the modal — go full-bleed. */
-.wc-modal-backdrop.is-host-modal { position: static; inset: auto; background: transparent; padding: 0; display: block; }
 .wc-modal-panel {
-  width: 100%; max-width: 560px; max-height: 90vh; overflow: auto;
+  width: 100%; max-width: 640px; max-height: 92vh; overflow: auto;
   background: var(--wc-surface); border-radius: var(--wc-radius);
   padding: 20px; box-shadow: 0 8px 40px rgba(15, 23, 42, 0.25);
 }
-.is-host-modal .wc-modal-panel { max-width: none; max-height: none; box-shadow: none; border-radius: 0; }
 .wc-modal-close {
   display: block; margin: 16px auto 0;
   font: inherit; font-size: 0.84rem; font-weight: 600;
