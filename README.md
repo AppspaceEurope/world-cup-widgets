@@ -23,8 +23,8 @@ In particular, the data comes from a **free, unofficial public feed** (ESPN). If
 
 1. In the Appspace Console, go to **Settings → Widgets**.
 2. Click **Import** and select the `.zip`:
-   - `world-cup-games-1.0.1.zip`
-   - `world-cup-tables-1.0.1.zip`
+   - `world-cup-games-1.2.1.zip`
+   - `world-cup-tables-1.2.1.zip`
 3. Add the widget to an Employee App homepage and configure it.
 
 Both widgets work with no configuration; every setting has a sensible default.
@@ -84,3 +84,9 @@ tables-widget/     the Tables widget
 scripts/           dev server + zip packager
 *.zip              the packaged widgets, ready to upload
 ```
+
+## Changelog
+
+- **1.2.x** — Detail views (match detail, team detail) open as a full-screen modal that renders as a tidy centred card: it fills a phone and stays a neat panel on larger screens. Both widgets behave the same.
+- **1.1.x** — Tables: tap a team for its recent results (with scores and goalscorers) and upcoming fixtures. Games: lineups and formation added to the match-detail view.
+- **1.0.x** — Initial release: live scores, browsable day pager, all 12 group tables, automatic brand colours, ESPN feed.
