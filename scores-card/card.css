@@ -111,9 +111,16 @@ html, body { height: 100%; background: #0a1228; }
 
 /* ============ Portrait (9:16) ============ */
 @media (max-aspect-ratio: 4/5) {
-  .card-secondary { flex-direction: column; max-height: 48%; }
-  .hl-score { font-size: 4rem; }
-  .crest-hero { width: 4.8rem; height: 4.8rem; }
+  /* Don't let the hero balloon: centre the match + lists as one tidy block
+   * between the header and footer (auto margins split the slack). */
+  .card-hero { flex: 0 1 auto; margin-top: auto; }
+  .card-secondary { flex-direction: column; max-height: 48%; margin-bottom: auto; }
+  /* Stacked: each column is its own content height (the landscape flex:1 1 0
+   * would collapse them to just their titles in a column container). */
+  .card-col { flex: 0 0 auto; }
+  .hl-score { font-size: 5rem; }
+  .hl-name { font-size: 2rem; }
+  .crest-hero { width: 6rem; height: 6rem; }
   .fx-grid { flex-direction: column; flex-wrap: nowrap; }
   .fx-card { flex-basis: auto; width: 100%; }
 }
