@@ -7,23 +7,39 @@
   "inputs": [
     {
       "name": "title",
+      "type": "textbox",
       "label": "Title",
-      "placeholder": "World Cup",
-      "type": "text",
+      "options": { "type": "text", "style": "" },
       "value": "World Cup",
-      "locked": false,
-      "options": {},
-      "validation": { "required": false, "maxLength": 40 }
+      "validation": { "required": false }
+    },
+    {
+      "name": "theme",
+      "type": "dropdown",
+      "label": "Theme",
+      "visible": true,
+      "items": [
+        { "label": "Dark", "value": "dark" },
+        { "label": "Light", "value": "light" }
+      ]
     },
     {
       "name": "accentColor",
-      "label": "Accent colour",
-      "placeholder": "",
       "type": "colorpicker",
-      "value": "",
-      "locked": false,
+      "label": "Accent colour",
       "options": {},
+      "value": "",
       "validation": { "required": false }
+    },
+    {
+      "name": "showScorers",
+      "type": "dropdown",
+      "label": "Goalscorers (live match)",
+      "visible": true,
+      "items": [
+        { "label": "Show", "value": "show" },
+        { "label": "Hide", "value": "hide" }
+      ]
     }
   ]
 }

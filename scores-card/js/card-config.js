@@ -11,7 +11,7 @@
   'use strict';
   var WC = (window.WC = window.WC || {});
 
-  var DEFAULTS = { title: 'World Cup', accentColor: '' };
+  var DEFAULTS = { title: 'World Cup', theme: 'dark', accentColor: '', showScorers: 'show' };
 
   // An input value can be a primitive or a richtext object ({ text }).
   function valueOf(input) {

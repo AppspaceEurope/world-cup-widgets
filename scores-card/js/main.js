@@ -22,6 +22,16 @@
     r.style.setProperty('--wc-accent-dark', hex);
   }
 
+  function applyTheme(theme) {
+    root.classList.remove('card-theme-dark', 'card-theme-light');
+    root.classList.add(theme === 'light' ? 'card-theme-light' : 'card-theme-dark');
+  }
+
+  function applyConfig(cfg) {
+    applyAccent(cfg.accentColor);
+    applyTheme(cfg.theme);
+  }
+
   // Attach the currently-focused live match to the view (rotates when >1 live).
   function focusedView() {
     var v = st.view;
@@ -88,11 +98,11 @@
     if (mock) CACHE_KEY += ':' + mock;
     WC.cardConfig.load(function (updated) {
       st.cfg = updated;
-      applyAccent(updated.accentColor);
+      applyConfig(updated);
       if (st.view) paint();
     }).then(function (cfg) {
       st.cfg = cfg;
-      applyAccent(cfg.accentColor);
+      applyConfig(cfg);
       // Cache-first paint so a player shows something instantly after a reboot.
       var cached = WC.cache.get(CACHE_KEY);
       if (cached && cached.data) applyDay(cached.data, false, cached.savedAt);

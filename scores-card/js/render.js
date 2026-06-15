@@ -44,7 +44,7 @@
   }
 
   // --- Hero: live match ---------------------------------------------------
-  function liveHero(m) {
+  function liveHero(m, cfg) {
     var hero = el('div', 'hero-live');
 
     var row = el('div', 'hl-row');
@@ -60,10 +60,12 @@
     row.appendChild(home); row.appendChild(center); row.appendChild(away);
     hero.appendChild(row);
 
-    var scorers = el('div', 'hl-scorers-row');
-    scorers.appendChild(scorerList(m, m.home.id, 'align-left'));
-    scorers.appendChild(scorerList(m, m.away.id, 'align-right'));
-    hero.appendChild(scorers);
+    if (!cfg || cfg.showScorers !== 'hide') {
+      var scorers = el('div', 'hl-scorers-row');
+      scorers.appendChild(scorerList(m, m.home.id, 'align-left'));
+      scorers.appendChild(scorerList(m, m.away.id, 'align-right'));
+      hero.appendChild(scorers);
+    }
 
     var meta = [m.groupNote, m.venue && m.venue.name].filter(Boolean).join(' · ');
     if (meta) hero.appendChild(el('div', { class: 'hl-meta', text: meta }));
@@ -172,7 +174,7 @@
     root.appendChild(head(view, cfg));
 
     var hero = el('div', 'card-hero');
-    if (view.mode === 'live' && view.focus) hero.appendChild(liveHero(view.focus));
+    if (view.mode === 'live' && view.focus) hero.appendChild(liveHero(view.focus, cfg));
     else hero.appendChild(fixturesHero(view));
     root.appendChild(hero);
 

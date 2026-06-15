@@ -66,12 +66,14 @@ Every setting has a default, so both widgets work with no configuration. Setting
 
 ### World Cup Live Scores (Card)
 
-The card is built for signage and needs no configuration. Two optional editor fields:
+The card is built for signage and needs no configuration. Optional editor fields:
 
 | Setting | Type | Default | What it does |
 |---------|------|---------|--------------|
 | Title | Text | `World Cup` | Heading shown top-left. |
+| Theme | Dark / Light | `Dark` | Overall look for the display. |
 | Accent colour | Colour | (empty) | Accent for the featured match and live highlights. Leave empty for the default. |
+| Goalscorers (live match) | Show / Hide | `Show` | Whether to list scorers under a live scoreline. |
 
 It refreshes itself (faster while matches are live), shows a cached view if the network drops, and adapts its layout to the display: full hero + up-next/recent on a TV (16:9 or 9:16), and a single focal match in a small media zone.
 
@@ -110,6 +112,7 @@ scripts/           dev server + zip packager (handle both widgets and cards)
 
 ## Changelog
 
+- **Card 1.1.1** — Editor config: **Title**, **Theme** (dark/light), **Accent colour**, **Goalscorers** show/hide. Fixed the Title field (cards use `textbox`, not the widgets' `text`, which the editor rejected).
 - **Card 1.1.0** — Cross-device build: the card is now transpiled to **ES5** with **polyfills** (core-js + fetch) and **self-hosted fonts**, so it plays on older signage engines (BrightSign, old Android WebView, the legacy Windows player), not just modern Chromium (PWA / Chromebox / UWP). No Google Fonts / external CDN dependency.
 - **Card 1.0.0** — New **World Cup Live Scores** card for digital signage: adaptive live / today / next-matchday states, responsive across 16:9, 9:16 and small media zones, reusing the widgets' ESPN data layer.
 - **1.2.x** — Detail views (match detail, team detail) open as a full-screen modal that renders as a tidy centred card: it fills a phone and stays a neat panel on larger screens. Both widgets behave the same.

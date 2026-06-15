@@ -1,15 +1,9 @@
 {
   "inputs": [
-    {
-      "name": "title",
-      "type": "text",
-      "value": "World Cup"
-    },
-    {
-      "name": "accentColor",
-      "type": "colorpicker",
-      "value": ""
-    }
+    { "name": "title", "type": "textbox", "value": "World Cup" },
+    { "name": "theme", "type": "dropdown", "value": "dark" },
+    { "name": "accentColor", "type": "colorpicker", "value": "" },
+    { "name": "showScorers", "type": "dropdown", "value": "show" }
   ],
   "customData": {}
 }
