@@ -22,9 +22,11 @@
 
   function fromInputs(inputs, into) {
     (inputs || []).forEach(function (i) {
+      // Apply any defined value (incl. '' so clearing a field in the editor is
+      // reflected live). model.json carries the real defaults.
       if (i && i.name != null) {
         var v = valueOf(i);
-        if (v !== undefined && v !== null && v !== '') into[i.name] = v;
+        if (v !== undefined) into[i.name] = v;
       }
     });
     return into;
@@ -62,9 +64,11 @@
     // Tell the host we're ready (harmless if no host is listening).
     try { if (window.parent && window.parent !== window) window.parent.postMessage({ message: 'onapiready' }, '*'); } catch (e) {}
 
+    // The Console editor pushes config to the preview as `onmodelupdate`
+    // (full model) on every field edit; `api.init` carries the initial config.
     window.addEventListener('message', function (ev) {
       var data = ev && ev.data;
-      if (!data || (data.message !== 'api.init' && data.message !== 'api.updatemodel')) return;
+      if (!data || (data.message !== 'api.init' && data.message !== 'onmodelupdate')) return;
       var hostCfg = fromHostMessage(data);
       if (hostCfg) {
         Object.assign(cfg, hostCfg);
