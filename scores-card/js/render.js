@@ -180,10 +180,10 @@
 
     var sec = el('div', 'card-secondary');
     if (view.mode === 'live') {
-      sec.appendChild(col('Up next', view.upcoming.slice(0, 5).map(fixtureRow), 'No more today'));
-      sec.appendChild(col('Recent', view.recent.slice(0, 5).map(resultRow), 'No results yet'));
+      sec.appendChild(col('Up next', view.upcoming.slice(0, 3).map(fixtureRow), 'No more today'));
+      sec.appendChild(col('Recent', view.recent.slice(0, 3).map(resultRow), 'No results yet'));
     } else if (view.recent.length) {
-      sec.appendChild(col('Recent results', view.recent.slice(0, 6).map(resultRow), ''));
+      sec.appendChild(col('Recent results', view.recent.slice(0, 4).map(resultRow), ''));
     }
     if (sec.childNodes.length) root.appendChild(sec);
 

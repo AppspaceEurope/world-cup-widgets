@@ -49,8 +49,11 @@ html, body { height: 100%; background: #0a1228; }
 @keyframes wc-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
 
 /* ---- Regions ---- */
-.card-hero { flex: 1 1 80%; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-.card-secondary { flex: 1 1 20%; min-height: 0; display: flex; gap: 0.8rem; overflow: hidden; }
+/* Hero fills the space; the secondary strip sizes to its content (so rows are
+ * never clipped mid-row) but is capped so it stays small and the live match
+ * keeps the bigger share. */
+.card-hero { flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.card-secondary { flex: 0 1 auto; max-height: 32%; min-height: 0; display: flex; gap: 0.8rem; overflow: hidden; }
 .card-col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column;
   background: var(--c-surface-2); border: 1px solid var(--c-border); border-radius: var(--wc-radius); padding: 0.6rem 0.75rem; overflow: hidden; }
 .col-title { flex: 0 0 auto; font-family: var(--wc-font-head); font-weight: 700; font-size: 0.72rem;
@@ -108,8 +111,7 @@ html, body { height: 100%; background: #0a1228; }
 
 /* ============ Portrait (9:16) ============ */
 @media (max-aspect-ratio: 4/5) {
-  .card-hero { flex-basis: 62%; }
-  .card-secondary { flex-direction: column; flex-basis: 38%; }
+  .card-secondary { flex-direction: column; max-height: 48%; }
   .hl-score { font-size: 4rem; }
   .crest-hero { width: 4.8rem; height: 4.8rem; }
   .fx-grid { flex-direction: column; flex-wrap: nowrap; }

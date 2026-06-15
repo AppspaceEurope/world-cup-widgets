@@ -116,6 +116,7 @@ scripts/           dev server + zip packager (handle both widgets and cards)
 
 ## Changelog
 
+- **Card 1.1.4** — Up next / Recent strip now sizes to its content (no more rows clipped mid-row at shorter viewports), capped so the live match keeps the bigger share.
 - **Card 1.1.3** — Time handling: kick-off times follow the device timezone/locale by default; added **Timezone** and **Time format** (24h/12h) options to pin a venue's zone (with a device-timezone fallback on older players). Editor changes update the preview live.
 - **Card 1.1.2** — Live preview: the card now reacts to editor config changes (`onmodelupdate`).
 - **Card 1.1.1** — Editor config: **Title**, **Theme** (dark/light), **Accent colour**, **Goalscorers** show/hide. Fixed the Title field (cards use `textbox`, not the widgets' `text`, which the editor rejected).
