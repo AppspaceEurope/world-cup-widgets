@@ -20,7 +20,9 @@
     "@fontsource/inter": "^5.2.8",
     "@fontsource/poppins": "^5.2.7",
     "archiver": "^6.0.1",
+    "autoprefixer": "^10.5.0",
     "core-js-bundle": "^3.49.0",
+    "postcss": "^8.5.15",
     "whatwg-fetch": "^3.6.20"
   }
 }

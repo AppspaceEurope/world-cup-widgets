@@ -17,6 +17,8 @@
 const fs = require('fs');
 const path = require('path');
 const babel = require('@babel/core');
+const postcss = require('postcss');
+const autoprefixer = require('autoprefixer');
 
 const root = path.join(__dirname, '..');
 const cardDir = path.join(root, 'scores-card');
@@ -72,10 +74,14 @@ fonts.forEach(function (f) {
 });
 
 // --- 4) one bundled card.css (fonts + tokens + base + card) ----------------
-const css = faceCss + '\n' +
+const rawCss = faceCss + '\n' +
   fs.readFileSync(path.join(root, 'shared/css/tokens.css'), 'utf8') + '\n' +
   fs.readFileSync(path.join(root, 'shared/css/base.css'), 'utf8') + '\n' +
   fs.readFileSync(path.join(cardDir, 'card.css'), 'utf8');
+// Autoprefix for older signage engines (adds -webkit-/-ms- like the stock cards).
+const css = postcss([autoprefixer({
+  overrideBrowserslist: ['ie 11', 'chrome >= 30', 'android >= 4.4', 'safari >= 9', 'edge >= 12']
+})]).process(rawCss, { from: undefined }).css;
 fs.writeFileSync(path.join(buildDir, 'card.css'), css);
 
 // --- 5) prod index.html (no external CDNs; polyfills first) ----------------

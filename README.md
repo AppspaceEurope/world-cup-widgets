@@ -116,6 +116,7 @@ scripts/           dev server + zip packager (handle both widgets and cards)
 
 ## Changelog
 
+- **Card 1.1.6** — Older-WebView CSS compatibility (Android): the stock cards autoprefix their CSS and avoid `clamp()` and CSS Grid; this card now does the same — score row uses flexbox (not Grid, unsupported < Chrome 57), font scaling is done in JS (not `clamp()`, < Chrome 79), and the CSS is run through Autoprefixer.
 - **Card 1.1.5** — Portrait fix: the Up next / Recent columns no longer collapse to just their titles (they were using the landscape side-by-side flex rule when stacked), and the match + lists are centred as a tidy block instead of a tall sparse hero.
 - **Card 1.1.4** — Up next / Recent strip now sizes to its content (no more rows clipped mid-row at shorter viewports), capped so the live match keeps the bigger share.
 - **Card 1.1.3** — Time handling: kick-off times follow the device timezone/locale by default; added **Timezone** and **Time format** (24h/12h) options to pin a venue's zone (with a device-timezone fallback on older players). Editor changes update the preview live.

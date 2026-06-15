@@ -27,6 +27,14 @@
     root.classList.add(theme === 'light' ? 'card-theme-light' : 'card-theme-dark');
   }
 
+  // Root font-size scaling (everything is in rem). Done in JS, not CSS clamp(),
+  // so it works on older signage webviews that don't support clamp().
+  function scaleRoot() {
+    var m = Math.min(window.innerWidth || 0, window.innerHeight || 0) || 800;
+    var px = Math.max(11, Math.min(52, m * 0.024)); // ~2.4vmin, bounded
+    document.documentElement.style.fontSize = px + 'px';
+  }
+
   function applyConfig(cfg) {
     applyAccent(cfg.accentColor);
     applyTheme(cfg.theme);
@@ -96,6 +104,8 @@
   }
 
   function init() {
+    scaleRoot();
+    window.addEventListener('resize', scaleRoot);
     WC.espn.configureFromUrl();
     // Namespace the cache by data source so dev mocks (and any multi-instance
     // use) don't share one key. Production (no mock) keeps the single key.
