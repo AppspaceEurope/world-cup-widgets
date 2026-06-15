@@ -40,6 +40,38 @@
         { "label": "Show", "value": "show" },
         { "label": "Hide", "value": "hide" }
       ]
+    },
+    {
+      "name": "timezone",
+      "type": "dropdown",
+      "label": "Timezone",
+      "visible": true,
+      "items": [
+        { "label": "Device default", "value": "" },
+        { "label": "UTC", "value": "UTC" },
+        { "label": "London", "value": "Europe/London" },
+        { "label": "Paris / Berlin", "value": "Europe/Paris" },
+        { "label": "New York (ET)", "value": "America/New_York" },
+        { "label": "Chicago (CT)", "value": "America/Chicago" },
+        { "label": "Denver (MT)", "value": "America/Denver" },
+        { "label": "Los Angeles (PT)", "value": "America/Los_Angeles" },
+        { "label": "Mexico City", "value": "America/Mexico_City" },
+        { "label": "Toronto", "value": "America/Toronto" },
+        { "label": "Dubai", "value": "Asia/Dubai" },
+        { "label": "Kuala Lumpur / Singapore", "value": "Asia/Kuala_Lumpur" },
+        { "label": "Sydney", "value": "Australia/Sydney" }
+      ]
+    },
+    {
+      "name": "timeFormat",
+      "type": "dropdown",
+      "label": "Time format",
+      "visible": true,
+      "items": [
+        { "label": "Device default", "value": "" },
+        { "label": "24-hour", "value": "24" },
+        { "label": "12-hour (am/pm)", "value": "12" }
+      ]
     }
   ]
 }

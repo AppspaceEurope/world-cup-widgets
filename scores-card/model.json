@@ -3,7 +3,9 @@
     { "name": "title", "type": "textbox", "value": "World Cup" },
     { "name": "theme", "type": "dropdown", "value": "dark" },
     { "name": "accentColor", "type": "colorpicker", "value": "" },
-    { "name": "showScorers", "type": "dropdown", "value": "show" }
+    { "name": "showScorers", "type": "dropdown", "value": "show" },
+    { "name": "timezone", "type": "dropdown", "value": "" },
+    { "name": "timeFormat", "type": "dropdown", "value": "" }
   ],
   "customData": {}
 }

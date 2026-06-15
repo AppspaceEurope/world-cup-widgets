@@ -74,6 +74,10 @@ The card is built for signage and needs no configuration. Optional editor fields
 | Theme | Dark / Light | `Dark` | Overall look for the display. |
 | Accent colour | Colour | (empty) | Accent for the featured match and live highlights. Leave empty for the default. |
 | Goalscorers (live match) | Show / Hide | `Show` | Whether to list scorers under a live scoreline. |
+| Timezone | Device default + zones | `Device` | Pin the venue's timezone so kick-off times are right even if the player's clock is on UTC. (Falls back to the device timezone on older players that lack full timezone data.) |
+| Time format | Device / 24-hour / 12-hour | `Device` | Force 24-hour or 12-hour (am/pm) times. Device default follows the player's locale. |
+
+**Times** show in the device's timezone and locale by default (each match's UTC kick-off is converted on the player). For correct times the player's **clock and timezone should be set right** — or pin the **Timezone** option above. (A correct clock also avoids the TLS errors some players hit on a wrong date.)
 
 It refreshes itself (faster while matches are live), shows a cached view if the network drops, and adapts its layout to the display: full hero + up-next/recent on a TV (16:9 or 9:16), and a single focal match in a small media zone.
 
@@ -112,6 +116,8 @@ scripts/           dev server + zip packager (handle both widgets and cards)
 
 ## Changelog
 
+- **Card 1.1.3** — Time handling: kick-off times follow the device timezone/locale by default; added **Timezone** and **Time format** (24h/12h) options to pin a venue's zone (with a device-timezone fallback on older players). Editor changes update the preview live.
+- **Card 1.1.2** — Live preview: the card now reacts to editor config changes (`onmodelupdate`).
 - **Card 1.1.1** — Editor config: **Title**, **Theme** (dark/light), **Accent colour**, **Goalscorers** show/hide. Fixed the Title field (cards use `textbox`, not the widgets' `text`, which the editor rejected).
 - **Card 1.1.0** — Cross-device build: the card is now transpiled to **ES5** with **polyfills** (core-js + fetch) and **self-hosted fonts**, so it plays on older signage engines (BrightSign, old Android WebView, the legacy Windows player), not just modern Chromium (PWA / Chromebox / UWP). No Google Fonts / external CDN dependency.
 - **Card 1.0.0** — New **World Cup Live Scores** card for digital signage: adaptive live / today / next-matchday states, responsive across 16:9, 9:16 and small media zones, reusing the widgets' ESPN data layer.

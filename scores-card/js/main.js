@@ -30,6 +30,11 @@
   function applyConfig(cfg) {
     applyAccent(cfg.accentColor);
     applyTheme(cfg.theme);
+    // Pin timezone / 12-24h for the time formatters (device default when empty).
+    WC.dom.setTimeOptions({
+      timeZone: cfg.timezone || undefined,
+      hour12: cfg.timeFormat === '12' ? true : (cfg.timeFormat === '24' ? false : undefined)
+    });
   }
 
   // Attach the currently-focused live match to the view (rotates when >1 live).

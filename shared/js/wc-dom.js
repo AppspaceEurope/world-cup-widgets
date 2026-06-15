@@ -46,11 +46,34 @@
     return node;
   }
 
-  // Kick-off time in the viewer's local timezone, e.g. "20:00"
+  // Optional display overrides. A card may call setTimeOptions to pin a
+  // timezone / force 12-24h; widgets never call it, so they keep the device
+  // locale + timezone (unchanged). timeZone silently falls back to the device
+  // if the engine can't honour it (older players lack full-ICU timezone data).
+  var timeOpts = { timeZone: undefined, hour12: undefined };
+  function setTimeOptions(o) {
+    o = o || {};
+    timeOpts.timeZone = o.timeZone || undefined;
+    timeOpts.hour12 = (typeof o.hour12 === 'boolean') ? o.hour12 : undefined;
+  }
+  function withOpts(base) {
+    var o = {};
+    for (var k in base) { if (base.hasOwnProperty(k)) o[k] = base[k]; }
+    if (timeOpts.timeZone) o.timeZone = timeOpts.timeZone;
+    if (timeOpts.hour12 !== undefined) o.hour12 = timeOpts.hour12;
+    return o;
+  }
+  function fmtIntl(date, base) {
+    try { return new Intl.DateTimeFormat(undefined, withOpts(base)).format(date); }
+    catch (e) {
+      try { return new Intl.DateTimeFormat(undefined, base).format(date); } // drop overrides
+      catch (e2) { return ''; }
+    }
+  }
+
+  // Kick-off time in the configured (or device) timezone, e.g. "20:00"
   function fmtKickoff(iso) {
-    try {
-      return new Intl.DateTimeFormat(undefined, { hour: '2-digit', minute: '2-digit' }).format(new Date(iso));
-    } catch (e) { return ''; }
+    return fmtIntl(new Date(iso), { hour: '2-digit', minute: '2-digit' });
   }
 
   // "Today" / "Tomorrow" / "Sat 14 Jun" relative to local now.
@@ -62,9 +85,7 @@
     if (diffDays === 0) return 'Today';
     if (diffDays === 1) return 'Tomorrow';
     if (diffDays === -1) return 'Yesterday';
-    try {
-      return new Intl.DateTimeFormat(undefined, { weekday: 'short', day: 'numeric', month: 'short' }).format(d);
-    } catch (e) { return d.toDateString(); }
+    return fmtIntl(d, { weekday: 'short', day: 'numeric', month: 'short' }) || d.toDateString();
   }
 
   // Short chip label: "Today" / "Sat 14"
@@ -102,6 +123,7 @@
   WC.dom = {
     el: el,
     clear: clear,
+    setTimeOptions: setTimeOptions,
     fmtKickoff: fmtKickoff,
     fmtDayLabel: fmtDayLabel,
     fmtChip: fmtChip,

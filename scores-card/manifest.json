@@ -8,7 +8,7 @@
   "Model": "model.json",
   "Category": "Feed",
   "Developer": "Mike Gibbs (Appspace)",
-  "Version": "1.1.2",
+  "Version": "1.1.3",
   "DisplayFormats": [
     { "Type": "tv" },
     { "Type": "mobile" }
