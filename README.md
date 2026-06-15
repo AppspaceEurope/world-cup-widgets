@@ -81,15 +81,16 @@ Live data is fetched directly in the browser from ESPN's public soccer API (free
 
 ## Rebuild / local development
 
-No build step or framework: plain HTML, CSS and JavaScript.
+The **widgets** are plain HTML/CSS/JS, no build. The **card** has a small build step so it runs on older signage players (BrightSign, old Android WebView, the legacy Windows player) as well as modern ones: it transpiles the card JS to **ES5**, bundles **polyfills** (core-js + whatwg-fetch), and **self-hosts the fonts**. Dev stays raw — the build only runs at package time.
 
 ```bash
-npm install            # one-time (just the zip packager)
+npm install            # one-time (zip packager + the card's build toolchain)
 
 npm run dev:games      # preview Games on http://localhost:5173/widget.html
 npm run dev:tables     # preview Tables on http://localhost:5174/widget.html
-npm run dev:card       # preview the Card on http://localhost:5175/index.html
-npm run package        # rebuild all .zip packages (widgets + card)
+npm run dev:card       # preview the Card on http://localhost:5175/index.html (raw, modern)
+npm run build:card     # produce the ES5 + polyfilled build in scores-card/build/
+npm run package        # rebuild all .zip packages (widgets + card; the card builds first)
 ```
 
 The widget dev server injects a small mock of the Appspace Widget API so widgets run standalone. Append `?mock=group-stage` (or `live`, `knockout-tbd`, `shootout`, `empty`) to preview against bundled sample data, and `?cfg=<urlencoded-json>` to try settings.
@@ -109,6 +110,7 @@ scripts/           dev server + zip packager (handle both widgets and cards)
 
 ## Changelog
 
+- **Card 1.1.0** — Cross-device build: the card is now transpiled to **ES5** with **polyfills** (core-js + fetch) and **self-hosted fonts**, so it plays on older signage engines (BrightSign, old Android WebView, the legacy Windows player), not just modern Chromium (PWA / Chromebox / UWP). No Google Fonts / external CDN dependency.
 - **Card 1.0.0** — New **World Cup Live Scores** card for digital signage: adaptive live / today / next-matchday states, responsive across 16:9, 9:16 and small media zones, reusing the widgets' ESPN data layer.
 - **1.2.x** — Detail views (match detail, team detail) open as a full-screen modal that renders as a tidy centred card: it fills a phone and stays a neat panel on larger screens. Both widgets behave the same.
 - **1.1.x** — Tables: tap a team for its recent results (with scores and goalscorers) and upcoming fixtures. Games: lineups and formation added to the match-detail view.

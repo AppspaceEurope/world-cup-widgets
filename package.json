@@ -7,13 +7,20 @@
     "dev:games": "node scripts/dev-server.js games-widget 5173",
     "dev:tables": "node scripts/dev-server.js tables-widget 5174",
     "dev:card": "node scripts/dev-server.js scores-card 5175",
+    "build:card": "node scripts/build-card.js",
     "package:games": "node scripts/package.js games-widget",
     "package:tables": "node scripts/package.js tables-widget",
-    "package:card": "node scripts/package.js scores-card",
-    "package": "node scripts/package.js games-widget && node scripts/package.js tables-widget && node scripts/package.js scores-card",
+    "package:card": "npm run build:card && node scripts/package.js scores-card",
+    "package": "node scripts/package.js games-widget && node scripts/package.js tables-widget && npm run package:card",
     "snapshots": "node scripts/capture-snapshots.js"
   },
   "devDependencies": {
-    "archiver": "^6.0.1"
+    "@babel/core": "^7.29.7",
+    "@babel/preset-env": "^7.29.7",
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/poppins": "^5.2.7",
+    "archiver": "^6.0.1",
+    "core-js-bundle": "^3.49.0",
+    "whatwg-fetch": "^3.6.20"
   }
 }

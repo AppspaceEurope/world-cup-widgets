@@ -61,17 +61,18 @@ archive.on('error', (err) => { throw err; });
 archive.pipe(output);
 
 if (isCard) {
-  // Card package: manifest/schema/model/index.html at the root + assets, no dev/.
-  ['manifest.json', 'schema.json', 'model.json', 'theme.json', 'index.html', 'card.css', 'thumbnail.svg'].forEach((f) => {
-    const full = path.join(widgetRoot, f);
-    if (fs.existsSync(full)) archive.file(full, { name: f });
-  });
-  ['js', 'assets', 'images'].forEach((dir) => {
-    const full = path.join(widgetRoot, dir);
-    if (fs.existsSync(full)) archive.directory(full, dir);
-  });
+  // Ship the cross-device build from scripts/build-card.js (ES5 + polyfills +
+  // local fonts). It already holds manifest/schema/model/theme, index.html,
+  // card.js, polyfills.js, card.css and assets/fonts at the root — no raw
+  // shared/ (it's bundled into card.js/card.css).
+  const buildDir = path.join(widgetRoot, 'build');
+  if (!fs.existsSync(path.join(buildDir, 'card.js'))) {
+    console.error('No build found — run `npm run build:card` first (or use `npm run package:card`).');
+    process.exit(1);
+  }
+  archive.directory(buildDir, false); // contents at the zip root
 } else {
-  // Widget package.
+  // Widget package: raw files + the shared/ modules loaded at runtime.
   archive.file(path.join(widgetRoot, 'widget.html'), { name: 'widget.html' });
   archive.file(schemaPath, { name: 'schema.json' });
   const widgetCss = path.join(widgetRoot, 'widget.css');
@@ -80,13 +81,11 @@ if (isCard) {
     const full = path.join(widgetRoot, dir);
     if (fs.existsSync(full)) archive.directory(full, dir);
   });
-}
-
-// --- Shared modules copied in (js + css; mock only with --with-mocks) ---
-archive.directory(path.join(sharedRoot, 'js'), 'shared/js');
-archive.directory(path.join(sharedRoot, 'css'), 'shared/css');
-if (withMocks) {
-  archive.directory(path.join(sharedRoot, 'mock'), 'shared/mock');
+  archive.directory(path.join(sharedRoot, 'js'), 'shared/js');
+  archive.directory(path.join(sharedRoot, 'css'), 'shared/css');
+  if (withMocks) {
+    archive.directory(path.join(sharedRoot, 'mock'), 'shared/mock');
+  }
 }
 
 archive.finalize();

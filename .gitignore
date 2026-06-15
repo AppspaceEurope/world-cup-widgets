@@ -1,6 +1,7 @@
 node_modules/
 dist/
 working/
+scores-card/build/
 .DS_Store
 Thumbs.db
 .vscode/
