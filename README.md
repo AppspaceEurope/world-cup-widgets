@@ -1,14 +1,17 @@
 # World Cup for Appspace
 
-**FIFA World Cup 2026** components for Appspace, ready to upload as `.zip` packages: two custom **widgets** for the Employee App, plus a live-scores **Card** for digital signage.
+**FIFA World Cup 2026** components for Appspace, ready to upload as `.zip` packages. They split across the two Appspace surfaces:
 
-| Component | Type | What it shows |
-|-----------|------|---------------|
-| **World Cup Games** | Widget | Matches (live scores, kick-off times, final scores) with a browsable day pager, goal scorers, placeholders for undecided knockout teams, and a tap-through match-detail view with lineups and formation. |
-| **World Cup Tables** | Widget | All 12 group standings (or a chosen subset), with live points, goal difference and qualification positions. Click a team for its recent results and upcoming fixtures. |
-| **World Cup Live Scores** | Card | Digital-signage card: today's fixtures when nothing is live, a live-focused view when matches are in play (big scoreline, clock, scorers), with up-next and recent results. Responsive from a small media zone to full-screen 16:9 and 9:16. |
+- 🧩 **Widgets → Intranet / Employee App** (homepages, communities) — installed via **Settings → Widgets**.
+- 📺 **Card → Digital Signage** (players, channels, media zones) — uploaded to the **Content Library**.
 
-The widgets have a transparent background and pick up your Appspace brand colour; the card is a self-contained dark signage view. All share one ESPN data layer.
+| Component | Runs on | What it shows |
+|-----------|---------|---------------|
+| **World Cup Games** | 🧩 **Widget** — Intranet / Employee App | Matches (live scores, kick-off times, final scores) with a browsable day pager, goal scorers, placeholders for undecided knockout teams, and a tap-through match-detail view with lineups and formation. |
+| **World Cup Tables** | 🧩 **Widget** — Intranet / Employee App | All 12 group standings (or a chosen subset), with live points, goal difference and qualification positions. Click a team for its recent results and upcoming fixtures. |
+| **World Cup Live Scores** | 📺 **Card** — Digital Signage | Today's fixtures when nothing is live, a live-focused view when matches are in play (big scoreline, clock, scorers), with up-next and recent results. Responsive from a small media zone to full-screen 16:9 and 9:16. |
+
+The widgets (Intranet) have a transparent background and pick up your Appspace brand colour; the card (Signage) is a self-contained dark full-screen view. All three share one ESPN data layer.
 
 ---
 
