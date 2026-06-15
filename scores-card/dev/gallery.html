@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>World Cup Live Scores — state gallery</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #0b1020; color: #e2e8f0; font: 14px/1.4 -apple-system, Segoe UI, Roboto, sans-serif; padding: 20px; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    p.sub { color: #94a3b8; margin: 0 0 20px; }
+    .row { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; }
+    .tile { }
+    .tile .cap { font-size: 12px; color: #9fb0c9; margin-bottom: 6px; font-weight: 600; }
+    .tile .cap b { color: #fff; }
+    .frame { box-shadow: 0 8px 30px rgba(0,0,0,.45); border-radius: 8px; overflow: hidden; background: #000; }
+    .frame iframe { display: block; border: 0; width: 100%; height: 100%; }
+  </style>
+</head>
+<body>
+  <h1>World Cup Live Scores — card states</h1>
+  <p class="sub">Each tile is the real card in an iframe at the labelled size. Data is mocked for deterministic states.</p>
+  <div class="row" id="row"></div>
+  <script>
+    var tiles = [
+      { cap: '<b>LIVE</b> · 16:9 landscape', mock: 'live', w: 640, h: 360 },
+      { cap: '<b>TODAY</b> (no live) · 16:9', mock: 'group-stage', w: 640, h: 360 },
+      { cap: '<b>LIVE</b> · 9:16 portrait', mock: 'live', w: 440, h: 782 },
+      { cap: '<b>TODAY</b> · 9:16 portrait', mock: 'group-stage', w: 440, h: 782 },
+      { cap: '<b>LIVE</b> · compact zone', mock: 'live', w: 340, h: 240 },
+      { cap: '<b>TODAY</b> · compact zone', mock: 'group-stage', w: 340, h: 240 }
+    ];
+    var row = document.getElementById('row');
+    tiles.forEach(function (t) {
+      var tile = document.createElement('div'); tile.className = 'tile';
+      var cap = document.createElement('div'); cap.className = 'cap'; cap.innerHTML = t.cap + ' &middot; ' + t.w + '×' + t.h;
+      var frame = document.createElement('div'); frame.className = 'frame'; frame.style.width = t.w + 'px'; frame.style.height = t.h + 'px';
+      var ifr = document.createElement('iframe'); ifr.src = '/index.html?mock=' + t.mock;
+      frame.appendChild(ifr); tile.appendChild(cap); tile.appendChild(frame); row.appendChild(tile);
+    });
+  </script>
+</body>
+</html>

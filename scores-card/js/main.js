@@ -82,6 +82,10 @@
 
   function init() {
     WC.espn.configureFromUrl();
+    // Namespace the cache by data source so dev mocks (and any multi-instance
+    // use) don't share one key. Production (no mock) keeps the single key.
+    var mock = WC.espn._config && WC.espn._config.mockName;
+    if (mock) CACHE_KEY += ':' + mock;
     WC.cardConfig.load(function (updated) {
       st.cfg = updated;
       applyAccent(updated.accentColor);

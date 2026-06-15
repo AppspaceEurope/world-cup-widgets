@@ -62,7 +62,7 @@ archive.pipe(output);
 
 if (isCard) {
   // Card package: manifest/schema/model/index.html at the root + assets, no dev/.
-  ['manifest.json', 'schema.json', 'model.json', 'index.html', 'card.css', 'thumbnail.svg'].forEach((f) => {
+  ['manifest.json', 'schema.json', 'model.json', 'theme.json', 'index.html', 'card.css', 'thumbnail.svg'].forEach((f) => {
     const full = path.join(widgetRoot, f);
     if (fs.existsSync(full)) archive.file(full, { name: f });
   });
