@@ -94,7 +94,9 @@
       return hero;
     }
     var grid = el('div', 'fx-grid');
-    view.upcoming.slice(0, 6).forEach(function (m, i) { grid.appendChild(fixtureCard(m, i === 0)); });
+    // Cap at 4 so the bigger cards stay a tidy, symmetric block at any size
+    // (more than that overflows a short zone; the soonest 4 is the glance value).
+    view.upcoming.slice(0, 4).forEach(function (m, i) { grid.appendChild(fixtureCard(m, i === 0)); });
     hero.appendChild(grid);
     return hero;
   }
