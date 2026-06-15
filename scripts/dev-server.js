@@ -37,10 +37,13 @@ const MIME = {
   '.woff2': 'font/woff2'
 };
 
+// Card dirs ship index.html; widget dirs ship widget.html.
+const defaultDoc = fs.existsSync(path.join(widgetRoot, 'index.html')) ? '/index.html' : '/widget.html';
+
 function resolvePath(urlPath) {
   // Strip query string, decode, normalise.
   let p = decodeURIComponent(urlPath.split('?')[0]);
-  if (p === '/' || p === '') p = '/widget.html';
+  if (p === '/' || p === '') p = defaultDoc;
 
   // "/shared/*" always resolves against the repo-root shared/ folder.
   if (p.startsWith('/shared/')) {
@@ -110,8 +113,11 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(port, () => {
-  console.log(`\n  World Cup widget dev server`);
+  const doc = defaultDoc.replace(/^\//, '');
+  const isCard = doc === 'index.html';
+  console.log(`\n  World Cup ${isCard ? 'card' : 'widget'} dev server`);
   console.log(`  Serving:   ${widgetDir}/  (shared/ → repo shared/)`);
-  console.log(`  URL:       http://localhost:${port}/widget.html`);
-  console.log(`  Mock mode: http://localhost:${port}/widget.html?mock=group-stage\n`);
+  console.log(`  URL:       http://localhost:${port}/${doc}`);
+  if (isCard) console.log(`  Mock host: http://localhost:${port}/dev/host.html`);
+  console.log(`  Mock mode: http://localhost:${port}/${doc}?mock=group-stage\n`);
 });

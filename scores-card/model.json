@@ -1,0 +1,15 @@
+{
+  "inputs": [
+    {
+      "name": "title",
+      "type": "text",
+      "value": "World Cup"
+    },
+    {
+      "name": "accentColor",
+      "type": "colorpicker",
+      "value": ""
+    }
+  ],
+  "customData": {}
+}

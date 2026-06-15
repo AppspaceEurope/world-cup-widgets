@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>World Cup Live Scores</title>
+  <base href="./">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap">
+
+  <link rel="stylesheet" href="shared/css/tokens.css">
+  <link rel="stylesheet" href="shared/css/base.css">
+  <link rel="stylesheet" href="card.css">
+</head>
+<body>
+  <!-- The card fills its iframe. Layout (hero / secondary) is arranged by CSS
+       media + orientation queries; content state classes are set by JS. -->
+  <div id="card" class="card-theme-dark is-loading" aria-live="polite">
+    <div class="card-boot">Loading World Cup scores…</div>
+  </div>
+
+  <!-- Shared modules (dependency order). Card reuses the widgets' data layer;
+       the widget-host modules (wc-height, wc-modal, wc-brand) are NOT used. -->
+  <script src="shared/js/wc-dom.js"></script>
+  <script src="shared/js/wc-cache.js"></script>
+  <script src="shared/js/espn-adapter.js"></script>
+  <script src="shared/js/wc-poller.js"></script>
+  <script src="shared/js/wc-teams.js"></script>
+
+  <!-- Card-specific -->
+  <script src="js/card-config.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "Name": "World Cup Live Scores",
+  "Id": "appspace.card.worldcupscores",
+  "Description": "Live FIFA World Cup scores for digital signage. Shows today's fixtures when nothing is live, switches to a live-focused view when matches are in play, with up-next and recent results. Responsive from a small media zone to a full-screen 16:9 or 9:16 display.",
+  "Thumbnail": "thumbnail.svg",
+  "Startup": "index.html",
+  "Schema": "schema.json",
+  "Model": "model.json",
+  "Category": "Feed",
+  "Developer": "Mike Gibbs (Appspace)",
+  "Version": "1.0.0",
+  "DisplayFormats": [
+    { "Type": "tv" },
+    { "Type": "mobile" }
+  ],
+  "Network": {
+    "RequiresConnection": true
+  },
+  "SupportTranslation": false,
+  "BaseCardTemplate": false,
+  "Features": {
+    "DesignTools": false
+  }
+}

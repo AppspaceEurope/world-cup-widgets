@@ -1,0 +1,29 @@
+{
+  "version": "1.0.0",
+  "editor": {
+    "form": { "visible": true },
+    "preview": { "scale": "auto" }
+  },
+  "inputs": [
+    {
+      "name": "title",
+      "label": "Title",
+      "placeholder": "World Cup",
+      "type": "text",
+      "value": "World Cup",
+      "locked": false,
+      "options": {},
+      "validation": { "required": false, "maxLength": 40 }
+    },
+    {
+      "name": "accentColor",
+      "label": "Accent colour",
+      "placeholder": "",
+      "type": "colorpicker",
+      "value": "",
+      "locked": false,
+      "options": {},
+      "validation": { "required": false }
+    }
+  ]
+}

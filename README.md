@@ -1,13 +1,14 @@
-# World Cup Widgets for Appspace
+# World Cup for Appspace
 
-Two custom widgets for the Appspace Employee App that show **FIFA World Cup 2026** scores and standings, ready to upload as `.zip` packages.
+**FIFA World Cup 2026** components for Appspace, ready to upload as `.zip` packages: two custom **widgets** for the Employee App, plus a live-scores **Card** for digital signage.
 
-| Widget | What it shows |
-|--------|---------------|
-| **World Cup Games** | Matches (live scores, kick-off times, final scores) with a browsable day pager for previous and upcoming days, goal scorers, placeholders for undecided knockout teams, and a tap-through match-detail view with lineups and formation. |
-| **World Cup Tables** | All 12 group standings (or a chosen subset), with live points, goal difference and qualification positions. Click a team for its recent results and upcoming fixtures. |
+| Component | Type | What it shows |
+|-----------|------|---------------|
+| **World Cup Games** | Widget | Matches (live scores, kick-off times, final scores) with a browsable day pager, goal scorers, placeholders for undecided knockout teams, and a tap-through match-detail view with lineups and formation. |
+| **World Cup Tables** | Widget | All 12 group standings (or a chosen subset), with live points, goal difference and qualification positions. Click a team for its recent results and upcoming fixtures. |
+| **World Cup Live Scores** | Card | Digital-signage card: today's fixtures when nothing is live, a live-focused view when matches are in play (big scoreline, clock, scorers), with up-next and recent results. Responsive from a small media zone to full-screen 16:9 and 9:16. |
 
-Both have a transparent background and no border, pick up your Appspace brand colour automatically, and are responsive from a narrow sidebar to a wide column.
+The widgets have a transparent background and pick up your Appspace brand colour; the card is a self-contained dark signage view. All share one ESPN data layer.
 
 ---
 
@@ -21,13 +22,16 @@ In particular, the data comes from a **free, unofficial public feed** (ESPN). If
 
 ## Install
 
+**Widgets** (Employee App):
 1. In the Appspace Console, go to **Settings → Widgets**.
-2. Click **Import** and select the `.zip`:
-   - `world-cup-games-1.2.1.zip`
-   - `world-cup-tables-1.2.1.zip`
+2. Click **Import** and select the `.zip`: `world-cup-games-1.2.1.zip` / `world-cup-tables-1.2.1.zip`.
 3. Add the widget to an Employee App homepage and configure it.
 
-Both widgets work with no configuration; every setting has a sensible default.
+**Card** (digital signage):
+1. In the Appspace Console **Content Library**, upload `world-cup-scores-card-1.0.0.zip`.
+2. Add the card to a signage channel or media zone. It needs no configuration.
+
+Everything works with no configuration; every setting has a sensible default.
 
 ## Configuration
 
@@ -57,6 +61,17 @@ Every setting has a default, so both widgets work with no configuration. Setting
 | Accent colour override | Colour | (empty) | A specific accent colour. Leave empty to use your Appspace brand colour. |
 | Refresh interval | Number, minutes (5 to 240) | `15` | How often the standings refresh. |
 
+### World Cup Live Scores (Card)
+
+The card is built for signage and needs no configuration. Two optional editor fields:
+
+| Setting | Type | Default | What it does |
+|---------|------|---------|--------------|
+| Title | Text | `World Cup` | Heading shown top-left. |
+| Accent colour | Colour | (empty) | Accent for the featured match and live highlights. Leave empty for the default. |
+
+It refreshes itself (faster while matches are live), shows a cached view if the network drops, and adapts its layout to the display: full hero + up-next/recent on a TV (16:9 or 9:16), and a single focal match in a small media zone.
+
 ## Data source
 
 Live data is fetched directly in the browser from ESPN's public soccer API (free, no API key). It carries scores, goal scorers, team crests, group standings, fixtures, and placeholder names for undecided knockout teams. All the feed-specific logic lives in one file, [`shared/js/espn-adapter.js`](shared/js/espn-adapter.js), so the data source can be swapped by editing that single file. Scores are cached locally and shown with an "offline" note if a refresh fails.
@@ -70,23 +85,28 @@ npm install            # one-time (just the zip packager)
 
 npm run dev:games      # preview Games on http://localhost:5173/widget.html
 npm run dev:tables     # preview Tables on http://localhost:5174/widget.html
-npm run package        # rebuild both .zip packages
+npm run dev:card       # preview the Card on http://localhost:5175/index.html
+npm run package        # rebuild all .zip packages (widgets + card)
 ```
 
-The dev server injects a small mock of the Appspace Widget API so the widgets run standalone in a browser. Append `?mock=group-stage` (or `live`, `knockout-tbd`, `shootout`, `empty`) to preview against bundled sample data, and `?cfg=<urlencoded-json>` to try different settings.
+The widget dev server injects a small mock of the Appspace Widget API so widgets run standalone. Append `?mock=group-stage` (or `live`, `knockout-tbd`, `shootout`, `empty`) to preview against bundled sample data, and `?cfg=<urlencoded-json>` to try settings.
+
+For the card, open `http://localhost:5175/dev/host.html` — a mock signage host that embeds the card in a resizable iframe with **16:9 / 9:16 / compact** aspect presets and data presets, so you can check every layout.
 
 ## Layout
 
 ```
-shared/            code shared by both widgets (data adapter, polling, cache, brand, rendering helpers)
+shared/            code shared across widgets + card (ESPN adapter, polling, cache, brand, rendering helpers)
 games-widget/      the Games widget (schema.json, widget.html, widget.css, js/)
 tables-widget/     the Tables widget
-scripts/           dev server + zip packager
-*.zip              the packaged widgets, ready to upload
+scores-card/       the digital-signage Card (manifest.json, schema.json, model.json, index.html, card.css, js/, dev/host.html)
+scripts/           dev server + zip packager (handle both widgets and cards)
+*.zip              the packaged widgets + card, ready to upload
 ```
 
 ## Changelog
 
+- **Card 1.0.0** — New **World Cup Live Scores** card for digital signage: adaptive live / today / next-matchday states, responsive across 16:9, 9:16 and small media zones, reusing the widgets' ESPN data layer.
 - **1.2.x** — Detail views (match detail, team detail) open as a full-screen modal that renders as a tidy centred card: it fills a phone and stays a neat panel on larger screens. Both widgets behave the same.
 - **1.1.x** — Tables: tap a team for its recent results (with scores and goalscorers) and upcoming fixtures. Games: lineups and formation added to the match-detail view.
 - **1.0.x** — Initial release: live scores, browsable day pager, all 12 group tables, automatic brand colours, ESPN feed.

@@ -27,21 +27,32 @@ const repoRoot = path.join(__dirname, '..');
 const widgetRoot = path.join(repoRoot, widgetDir);
 const sharedRoot = path.join(repoRoot, 'shared');
 
+// A card dir has manifest.json (Appspace Card); a widget dir has schema.json + templateKey.
+const manifestPath = path.join(widgetRoot, 'manifest.json');
 const schemaPath = path.join(widgetRoot, 'schema.json');
-if (!fs.existsSync(schemaPath)) {
-  console.error(`No schema.json found in ${widgetDir}/`);
-  process.exit(1);
+const isCard = fs.existsSync(manifestPath);
+
+let key, version;
+if (isCard) {
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  version = manifest.Version || '0.0.0';
+  key = 'world-cup-' + path.basename(widgetRoot); // scores-card → world-cup-scores-card
+} else {
+  if (!fs.existsSync(schemaPath)) {
+    console.error(`No manifest.json or schema.json found in ${widgetDir}/`);
+    process.exit(1);
+  }
+  const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
+  key = schema.templateKey || widgetDir;
+  version = schema.version || '0.0.0';
 }
-const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
-const key = schema.templateKey || widgetDir;
-const version = schema.version || '0.0.0';
 
 const outputPath = path.join(repoRoot, `${key}-${version}.zip`);
 const output = fs.createWriteStream(outputPath);
 const archive = archiver('zip', { zlib: { level: 9 } });
 
 output.on('close', () => {
-  console.log(`\n  ✅ ${key} v${version}`);
+  console.log(`\n  ✅ ${key} v${version}  (${isCard ? 'card' : 'widget'})`);
   console.log(`  📦 ${(archive.pointer() / 1024).toFixed(1)} KB`);
   console.log(`  📍 ${outputPath}\n`);
 });
@@ -49,17 +60,27 @@ archive.on('warning', (err) => { if (err.code !== 'ENOENT') throw err; });
 archive.on('error', (err) => { throw err; });
 archive.pipe(output);
 
-// --- Mandatory + per-widget files ---
-archive.file(path.join(widgetRoot, 'widget.html'), { name: 'widget.html' });
-archive.file(schemaPath, { name: 'schema.json' });
-
-const widgetCss = path.join(widgetRoot, 'widget.css');
-if (fs.existsSync(widgetCss)) archive.file(widgetCss, { name: 'widget.css' });
-
-['js', 'images', 'passport'].forEach((dir) => {
-  const full = path.join(widgetRoot, dir);
-  if (fs.existsSync(full)) archive.directory(full, dir);
-});
+if (isCard) {
+  // Card package: manifest/schema/model/index.html at the root + assets, no dev/.
+  ['manifest.json', 'schema.json', 'model.json', 'index.html', 'card.css', 'thumbnail.svg'].forEach((f) => {
+    const full = path.join(widgetRoot, f);
+    if (fs.existsSync(full)) archive.file(full, { name: f });
+  });
+  ['js', 'assets', 'images'].forEach((dir) => {
+    const full = path.join(widgetRoot, dir);
+    if (fs.existsSync(full)) archive.directory(full, dir);
+  });
+} else {
+  // Widget package.
+  archive.file(path.join(widgetRoot, 'widget.html'), { name: 'widget.html' });
+  archive.file(schemaPath, { name: 'schema.json' });
+  const widgetCss = path.join(widgetRoot, 'widget.css');
+  if (fs.existsSync(widgetCss)) archive.file(widgetCss, { name: 'widget.css' });
+  ['js', 'images', 'passport'].forEach((dir) => {
+    const full = path.join(widgetRoot, dir);
+    if (fs.existsSync(full)) archive.directory(full, dir);
+  });
+}
 
 // --- Shared modules copied in (js + css; mock only with --with-mocks) ---
 archive.directory(path.join(sharedRoot, 'js'), 'shared/js');
