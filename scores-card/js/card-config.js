@@ -1,16 +1,25 @@
-/* card-config.js — config for the World Cup scores card. Registers WC.cardConfig.
+/* card-config.js — config + host handshake for the World Cup scores card.
  *
- * A card has no widget-api. Config precedence (low → high):
- *   built-in DEFAULTS  →  model.json (packaged defaults)  →  ?cfg= (dev/query)
- *   →  host api.init (the player/Console may post the user's resolved model).
+ * Faithful to the Appspace card SDK (bitbucket appspace-cloud/card-api · cardapi.js).
+ * KEY FACTS that earlier versions got wrong:
+ *   • `window.$cardApi` is NOT injected by the player — the SDK CREATES it. A card
+ *     that doesn't speak the protocol simply never talks to the host.
+ *   • The host talks to the card by postMessage; the card replies in kind. EVERY
+ *     message carries `cardId` (from the `?cardId=` query param) so the host can
+ *     correlate it to the content slot.
+ *   • The card MUST post {message:'loaded', cardId} once it has rendered, or the
+ *     player keeps the card hidden (black) and eventually logs "Failed to load
+ *     content". Config arrives via api.init / onmodelupdate; readiness is announced
+ *     with onapiready. The host may (re)establish the postMessage target via
+ *     appspaceapp.webview.postmessage.init (iframe/native) or .mswebview… (UWP).
  *
- * The card is fully functional on DEFAULTS alone (live scores need no config),
- * so we never block on the host: load() resolves immediately with what we have
- * and calls onUpdate() if a host message arrives later. */
+ * We replicate that host protocol here (no jQuery/SDK bundle) and also expose a
+ * minimal window.$cardApi for any host-side "is this a card?" detection. */
 (function () {
   'use strict';
   var WC = (window.WC = window.WC || {});
 
+  // Keep in sync with model.json — packaged defaults the card runs on.
   var DEFAULTS = { title: 'World Cup', theme: 'dark', accentColor: '', showScorers: 'show', timezone: '', timeFormat: '' };
 
   // An input value can be a primitive or a richtext object ({ text }).
@@ -22,17 +31,16 @@
 
   function fromInputs(inputs, into) {
     (inputs || []).forEach(function (i) {
-      // Apply any defined value (incl. '' so clearing a field in the editor is
-      // reflected live). model.json carries the real defaults.
       if (i && i.name != null) {
         var v = valueOf(i);
-        if (v !== undefined) into[i.name] = v;
+        if (v !== undefined) into[i.name] = v; // apply '' too, so clearing reflects
       }
     });
     return into;
   }
 
-  // Host api.init payloads vary; pull a config object from the likely shapes.
+  // Host messages vary in shape (api.init carries .config, onmodelupdate carries
+  // .model). Pull a config object out of the likely shapes.
   function fromHostMessage(msg) {
     if (!msg || typeof msg !== 'object') return null;
     var c = msg.config || msg;
@@ -57,34 +65,87 @@
     } catch (e) { /* ignore bad ?cfg= */ }
   }
 
-  // Returns a Promise<config>. onUpdate(config) fires if the host posts config later.
-  function load(onUpdate) {
-    var cfg = Object.assign({}, DEFAULTS);
-
-    // Tell the host we're ready (harmless if no host is listening).
-    try { if (window.parent && window.parent !== window) window.parent.postMessage({ message: 'onapiready' }, '*'); } catch (e) {}
-
-    // The Console editor pushes config to the preview as `onmodelupdate`
-    // (full model) on every field edit; `api.init` carries the initial config.
-    window.addEventListener('message', function (ev) {
-      var data = ev && ev.data;
-      if (!data || (data.message !== 'api.init' && data.message !== 'onmodelupdate')) return;
-      var hostCfg = fromHostMessage(data);
-      if (hostCfg) {
-        Object.assign(cfg, hostCfg);
-        if (typeof onUpdate === 'function') onUpdate(Object.assign({}, cfg));
-      }
-    });
-
-    return fetch('model.json', { headers: { Accept: 'application/json' } })
-      .then(function (r) { return r.ok ? r.json() : null; })
-      .catch(function () { return null; })
-      .then(function (model) {
-        if (model && Array.isArray(model.inputs)) fromInputs(model.inputs, cfg);
-        parseQuery(cfg); // query overrides packaged defaults
-        return Object.assign({}, cfg);
-      });
+  // ---- Host communication (matches cardapi.js raiseMessage / onParentMessage) ----
+  function param(n) {
+    try { return new URLSearchParams(window.location.search).get(n) || ''; } catch (e) { return ''; }
   }
 
-  WC.cardConfig = { load: load, DEFAULTS: DEFAULTS };
+  var cardId = param('cardId');
+  var appWindow = null;   // set when the host establishes a postMessage target
+  var appOrigin = null;
+  var msMessaging = null; // UWP/MS-webview: buffer messages for host polling
+  var cfg = Object.assign({}, DEFAULTS);
+  var onUpdateCb = null;
+
+  // Send a message to the host, mirroring the SDK's target fallback chain.
+  function raiseMessage(msg) {
+    try {
+      if (appWindow) appWindow.postMessage(msg, appOrigin || '*');
+      else if (msMessaging) msMessaging.push(msg);
+      else if (window.opener && window.opener.postMessage) window.opener.postMessage(msg, '*');
+      else if (window.parent && window.parent.postMessage) window.parent.postMessage(msg, '*');
+    } catch (e) {}
+  }
+
+  function announce() { raiseMessage({ message: 'onapiready', cardId: cardId }); }
+
+  function applyHostCfg(hostCfg) {
+    if (!hostCfg) return;
+    Object.assign(cfg, hostCfg);
+    if (typeof onUpdateCb === 'function') onUpdateCb(Object.assign({}, cfg));
+  }
+
+  function onHostMessage(ev) {
+    var d = ev && ev.data;
+    if (!d || !d.message) return;
+    var m = String(d.message).toLowerCase();
+    // Host establishing the reply channel — capture it and re-announce.
+    if (m === 'appspaceapp.webview.postmessage.init') { appWindow = ev.source; appOrigin = ev.origin; announce(); return; }
+    if (m === 'appspaceapp.mswebview.postmessage.init') { msMessaging = []; announce(); return; }
+    if (m === 'api.init' || m === 'onmodelupdate') { applyHostCfg(fromHostMessage(d)); }
+  }
+
+  // UWP/MS-webview bridge globals (the host pushes in / polls out through these).
+  window.msPostMessaging = function (message) { try { onHostMessage({ data: JSON.parse(message) }); } catch (e) {} };
+  window.msRetrieveMessaging = function () {
+    var out = msMessaging ? JSON.stringify(msMessaging) : '[]';
+    if (msMessaging) msMessaging = [];
+    return out;
+  };
+
+  // Listen + announce as early as possible (the host may send the init handshake
+  // the moment the page loads, before main.js calls load()).
+  try { window.addEventListener('message', onHostMessage, false); } catch (e) {}
+  announce();
+
+  // Minimal window.$cardApi for host-side detection + SDK-method parity.
+  if (!window.$cardApi) {
+    window.$cardApi = {
+      init: announce,
+      isReady: function () { return window.Promise ? Promise.resolve() : { then: function (f) { f(); return this; } }; },
+      subscribeModelUpdate: function (cb) { onUpdateCb = cb; },
+      subscribeSchemaUpdate: function () {}, subscribeModeChange: function () {}, subscribeToMessages: function () {},
+      getConfig: function () { return {}; },
+      getModel: function () { return { inputs: [] }; },
+      getMode: function () { return param('mode') || 'tv'; },
+      notifyOnLoad: function () { raiseMessage({ message: 'loaded', cardId: cardId }); },
+      notifyOnComplete: function () { raiseMessage({ message: 'complete', cardId: cardId }); },
+      notifyOnError: function () { raiseMessage({ message: 'error', cardId: cardId }); }
+    };
+  }
+
+  // Returns Promise<config>. onUpdate(config) fires when the host pushes config.
+  function load(onUpdate) {
+    onUpdateCb = onUpdate;
+    parseQuery(cfg);   // dev/query ?cfg= override
+    announce();        // (re)tell the host we're ready — it replies api.init / postmessage.init
+    return Promise.resolve(Object.assign({}, cfg));
+  }
+
+  // Tell the host the card has rendered → it reveals the card. Without this the
+  // player keeps it hidden (black) and reports "Failed to load content".
+  function signalLoaded() { raiseMessage({ message: 'loaded', cardId: cardId }); }
+  function signalError() { raiseMessage({ message: 'error', cardId: cardId }); }
+
+  WC.cardConfig = { load: load, signalLoaded: signalLoaded, signalError: signalError, DEFAULTS: DEFAULTS };
 })();

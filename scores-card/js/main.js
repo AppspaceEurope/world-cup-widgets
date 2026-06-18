@@ -122,6 +122,10 @@
       var cached = WC.cache.get(CACHE_KEY);
       if (cached && cached.data) applyDay(cached.data, false, cached.savedAt);
       startPoller();
+      // Tell the signage player the card has loaded so it reveals it (otherwise it
+      // times out → black). Done after the first paint, NOT gated on the ESPN fetch,
+      // so a slow/failed feed still shows the card (loading / "scores unavailable").
+      WC.cardConfig.signalLoaded();
     });
   }
 
