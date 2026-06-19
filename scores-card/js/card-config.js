@@ -1,6 +1,6 @@
 /* card-config.js — config + host handshake for the World Cup scores card.
  *
- * Faithful to the Appspace card SDK (bitbucket appspace-cloud/card-api · cardapi.js).
+ * Faithful to the Appspace card SDK (cardapi.js) — the host postMessage protocol.
  * KEY FACTS that earlier versions got wrong:
  *   • `window.$cardApi` is NOT injected by the player — the SDK CREATES it. A card
  *     that doesn't speak the protocol simply never talks to the host.
@@ -134,12 +134,47 @@
     };
   }
 
-  // Returns Promise<config>. onUpdate(config) fires when the host pushes config.
+  // Read the SERVED model.json (the saved per-content config — title, theme, etc.).
+  // On a live player this is the ONLY source of config: the player's api.init carries
+  // no model and the player never sends onmodelupdate (only the Console editor does).
+  // Use XMLHttpRequest, NOT the Fetch API — Fetch refuses file:// unconditionally
+  // (that crashed v1.1.6), whereas XHR works on file:// because players enable
+  // allowFileAccessFromFileURLs. Fully tolerant: a failure/timeout just falls back to
+  // DEFAULTS — it must never block init or throw (or the card goes black).
+  function readModel() {
+    return new Promise(function (resolve) {
+      var done = false;
+      function finish() { if (done) return; done = true; resolve(); }
+      var timer = setTimeout(finish, 1500); // never block init on a slow/hung read
+      try {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'model.json', true);
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState !== 4) return;
+          clearTimeout(timer);
+          try {
+            // file:// success reports status 0 (no HTTP status line).
+            if ((xhr.status === 200 || xhr.status === 0) && xhr.responseText) {
+              var data = JSON.parse(xhr.responseText);
+              if (data && Array.isArray(data.inputs)) fromInputs(data.inputs, cfg);
+            }
+          } catch (e) { /* malformed/absent — keep DEFAULTS */ }
+          finish();
+        };
+        xhr.onerror = function () { clearTimeout(timer); finish(); };
+        xhr.send();
+      } catch (e) { clearTimeout(timer); finish(); }
+    });
+  }
+
+  // Returns Promise<config>. onUpdate(config) fires when the host pushes config later.
   function load(onUpdate) {
     onUpdateCb = onUpdate;
-    parseQuery(cfg);   // dev/query ?cfg= override
-    announce();        // (re)tell the host we're ready — it replies api.init / postmessage.init
-    return Promise.resolve(Object.assign({}, cfg));
+    announce();          // (re)tell the host we're ready — it replies api.init / postmessage.init
+    return readModel().then(function () {
+      parseQuery(cfg);   // dev/query ?cfg= overrides the served model (dev only)
+      return Object.assign({}, cfg);
+    });
   }
 
   // Tell the host the card has rendered → it reveals the card. Without this the

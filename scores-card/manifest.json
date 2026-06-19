@@ -8,7 +8,7 @@
   "Model": "model.json",
   "Category": "Feed",
   "Developer": "Mike Gibbs",
-  "Version": "1.2.0",
+  "Version": "1.2.2",
   "DisplayFormats": [
     { "Type": "tv" },
     { "Type": "mobile" }
@@ -17,7 +17,7 @@
     "RequiresConnection": true
   },
   "SupportTranslation": false,
-  "BaseCardTemplate": false,
+  "BaseCardTemplate": true,
   "Features": {
     "DesignTools": false
   }

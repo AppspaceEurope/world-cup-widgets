@@ -31,7 +31,7 @@ In particular, the data comes from a **free, unofficial public feed** (ESPN). If
 3. Add the widget to an Employee App homepage and configure it.
 
 **Card** (digital signage):
-1. In the Appspace Console **Content Library**, upload `world-cup-scores-card-1.2.0.zip`.
+1. In the Appspace Console **Content Library**, upload `world-cup-scores-card-1.2.2.zip`.
 2. Add the card to a signage channel or media zone. It needs no configuration.
 
 Everything works with no configuration; every setting has a sensible default.
@@ -89,7 +89,7 @@ Live data is fetched directly in the browser from ESPN's public soccer API (free
 
 The **widgets** are plain HTML/CSS/JS, no build. The **card** has a small build step so it runs on older signage players (BrightSign, old Android WebView, the legacy Windows player) as well as modern ones: it transpiles the card JS to **ES5**, bundles **polyfills** (core-js + whatwg-fetch), and **self-hosts the fonts**. Dev stays raw — the build only runs at package time.
 
-The card talks to the signage player over the Appspace card **host protocol** (a `postMessage` handshake — announce `onapiready`, then post `loaded` with the player's `cardId` once rendered, or the player leaves it hidden). Rather than bundle the full SDK + jQuery, `scores-card/js/card-config.js` implements that protocol directly. For the official starter and the protocol's source of truth.
+The card talks to the signage player over the Appspace card **host protocol** (a `postMessage` handshake — announce `onapiready`, then post `loaded` with the player's `cardId` once rendered, or the player leaves it hidden). Rather than bundle the full SDK + jQuery, `scores-card/js/card-config.js` implements that `postMessage` protocol directly.
 
 ```bash
 npm install            # one-time (zip packager + the card's build toolchain)
@@ -118,7 +118,9 @@ scripts/           dev server + zip packager (handle both widgets and cards)
 
 ## Changelog
 
-- **Card 1.2.0** — **Now plays on real signage players** (verified on BrightSign-class and modern Android). The fix: the card now speaks the Appspace card **host protocol** — it announces `onapiready` and, once it has painted, posts `loaded` (both tagged with the player's `cardId`). Without that the player keeps the card hidden (black) and logs "Failed to load content". (`window.$cardApi` is created *by the card*, not injected by the player. Developer field is "Mike Gibbs" (this is not an official Appspace card).
+- **Card 1.2.2** — Ships a **base theme**: setting `"BaseCardTemplate": true` in `manifest.json` registers the card's bundled `theme.json` as a base theme in the Console (no separate theme import needed). Theme *variations* are still created/managed in the Console.
+- **Card 1.2.1** — Configuration now applies on the **live display**, not just the Console preview. A signage player delivers the saved config (title, theme, accent…) only via the bundled `model.json` — it isn't pushed over `postMessage` (that's editor-only). The card now reads `model.json` with **XMLHttpRequest** (which works from `file://` on players, unlike the Fetch API) while still honouring the editor's live `onmodelupdate`. Fixes the Light theme / a custom title not showing on the device.
+- **Card 1.2.0** — **Now plays on real signage players** (verified on BrightSign-class and modern Android). The fix: the card now speaks the Appspace card **host protocol** — it announces `onapiready` and, once it has painted, posts `loaded` (both tagged with the player's `cardId`). Without that the player keeps the card hidden (black) and logs "Failed to load content". (`window.$cardApi` is created *by the card*, not injected by the player.) Developer field is "Mike Gibbs" (this is not an official Appspace card).
 - **Card 1.1.7** — Removed the runtime `fetch('model.json')`: a signage player serves the card from `file://`, where browsers block the Fetch API — the throw was one of the things stopping the card loading. It now runs on built-in defaults; `model.json` still ships for the editor. (Necessary but not sufficient — the host protocol in 1.2.0 was the missing piece.)
 - **Card 1.1.6** — Older-WebView CSS compatibility (Android): the stock cards autoprefix their CSS and avoid `clamp()` and CSS Grid; this card now does the same — score row uses flexbox (not Grid, unsupported < Chrome 57), font scaling is done in JS (not `clamp()`, < Chrome 79), and the CSS is run through Autoprefixer.
 - **Card 1.1.5** — Portrait fix: the Up next / Recent columns no longer collapse to just their titles (they were using the landscape side-by-side flex rule when stacked), and the match + lists are centred as a tidy block instead of a tall sparse hero.
